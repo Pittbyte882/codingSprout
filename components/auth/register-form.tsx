@@ -240,7 +240,7 @@ export function RegisterForm() {
   `
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6">
+    <form onSubmit={handleSubmit} className="mt-6" autoComplete="off">
       <StepIndicator currentStep={currentStep} />
 
       {/* Step 1: Parent Information */}
@@ -290,6 +290,7 @@ export function RegisterForm() {
               onChange={(e) => updateField('email', e.target.value)}
               placeholder="you@example.com"
               className={inputClass('email')}
+              autoComplete="new-email"
             />
             {errors.email && (
               <p className="text-xs text-red-500">{errors.email}</p>
@@ -311,13 +312,14 @@ export function RegisterForm() {
             <Label htmlFor="password">Password *</Label>
             <div className="relative">
               <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                onChange={(e) => updateField('password', e.target.value)}
-                placeholder="Create a password (min 8 characters)"
-                className={inputClass('password')}
-              />
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              onChange={(e) => updateField('password', e.target.value)}
+              placeholder="Create a password (min 8 characters)"
+              className={inputClass('password')}
+              autoComplete="new-password"
+            />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
