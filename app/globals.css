@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Coding Sprout Brand Colors - Now in proper HSL format */
+    /* Format: H S% L% (hue saturation lightness) */
+    
+    --background: 210 40% 98%;           /* off-white #F8FAFC */
+    --foreground: 215 28% 17%;           /* deep-navy #1E293B */
+    
+    --card: 0 0% 100%;                   /* white #FFFFFF */
+    --card-foreground: 215 28% 17%;      /* deep-navy #1E293B */
+    
+    --popover: 0 0% 100%;                /* white #FFFFFF */
+    --popover-foreground: 215 28% 17%;   /* deep-navy #1E293B */
+    
+    --primary: 122 39% 49%;              /* sprout-green #43A047 */
+    --primary-foreground: 0 0% 100%;     /* white */
+    
+    --secondary: 215 28% 17%;            /* deep-navy #1E293B */
+    --secondary-foreground: 0 0% 100%;   /* white */
+    
+    --muted: 220 13% 91%;                /* light-gray #E5E7EB */
+    --muted-foreground: 215 20% 35%;     /* dark-gray #334155 */
+    
+    --accent: 197 92% 60%;               /* sky-blue #38BDF8 */
+    --accent-foreground: 215 28% 17%;    /* deep-navy #1E293B */
+    
+    --destructive: 0 84% 60%;            /* red #EF4444 */
+    --destructive-foreground: 0 0% 100%; /* white */
+    
+    --border: 220 13% 91%;               /* light-gray #E5E7EB */
+    --input: 220 13% 91%;                /* light-gray #E5E7EB */
+    --ring: 122 39% 49%;                 /* sprout-green #43A047 */
+    
+    --chart-1: 122 39% 49%;              /* sprout-green #43A047 */
+    --chart-2: 197 92% 60%;              /* sky-blue #38BDF8 */
+    --chart-3: 215 28% 17%;              /* deep-navy #1E293B */
+    --chart-4: 48 97% 53%;               /* warm-yellow #FACC15 */
+    --chart-5: 122 38% 57%;              /* lighter green #66BB6A */
+    
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 215 28% 17%;           /* deep-navy #1E293B */
+    --foreground: 210 40% 98%;           /* off-white #F8FAFC */
+    
+    --card: 215 20% 35%;                 /* dark-gray #334155 */
+    --card-foreground: 210 40% 98%;      /* off-white #F8FAFC */
+    
+    --popover: 215 20% 35%;              /* dark-gray #334155 */
+    --popover-foreground: 210 40% 98%;   /* off-white #F8FAFC */
+    
+    --primary: 122 39% 49%;              /* sprout-green #43A047 */
+    --primary-foreground: 0 0% 100%;     /* white */
+    
+    --secondary: 210 40% 98%;            /* off-white #F8FAFC */
+    --secondary-foreground: 215 28% 17%; /* deep-navy #1E293B */
+    
+    --muted: 215 20% 35%;                /* dark-gray #334155 */
+    --muted-foreground: 215 20% 65%;     /* lighter gray #94A3B8 */
+    
+    --accent: 197 92% 60%;               /* sky-blue #38BDF8 */
+    --accent-foreground: 215 28% 17%;    /* deep-navy #1E293B */
+    
+    --destructive: 0 84% 60%;            /* red #EF4444 */
+    --destructive-foreground: 0 0% 100%; /* white */
+    
+    --border: 215 20% 35%;               /* dark-gray #334155 */
+    --input: 215 20% 35%;                /* dark-gray #334155 */
+    --ring: 122 39% 49%;                 /* sprout-green #43A047 */
+  }
+}
