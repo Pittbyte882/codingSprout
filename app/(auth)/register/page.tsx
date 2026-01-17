@@ -13,7 +13,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen">
       {/* Left Side - Form */}
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm lg:w-96">
+        <div className="mx-auto w-full max-w-md lg:w-[420px]">
           <div className="text-center">
             <Link href="/" className="inline-flex items-center gap-2">
               <Image src="/images/logo.png" alt="Coding Sprout" width={48} height={48} />

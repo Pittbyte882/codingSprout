@@ -10,3 +10,6 @@ export function createClient() {
 
   return createBrowserClient(supabaseUrl, supabaseAnonKey)
 }
+
+// Alias for backwards compatibility
+export const createBrowserSupabaseClient = createClient

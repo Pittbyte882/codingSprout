@@ -1,18 +1,51 @@
+// NEW: School interface
+export interface School {
+  id: string
+  name: string
+  short_code: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+// NEW: Payment type
+export type PaymentType = 'out_of_pocket' | 'school_funds'
+
+// NEW: Age group type (matches your class groupings)
+export type AgeGroup = 'tk-2' | '3-5' | '6-8' | '9-12'
+
+// Age group display labels
+export const AGE_GROUP_LABELS: Record<AgeGroup, string> = {
+  'tk-2': 'TK - 2nd Grade',
+  '3-5': '3rd - 5th Grade',
+  '6-8': '6th - 8th Grade',
+  '9-12': '9th - 12th Grade',
+}
 export interface Profile {
   id: string
   email: string
   full_name: string | null
+  first_name: string | null
+  last_name: string | null 
   phone: string | null
   role: "parent" | "admin" | "instructor"
+  payment_type: PaymentType | null 
+  school_id: string | null 
+  other_school_name: string | null 
   created_at: string
   updated_at: string
+  school?: School  
 }
 
 export interface Student {
   id: string
   parent_id: string
   full_name: string
+  first_name: string | null
+  last_name: string | null 
   grade_level: string
+  age_group: AgeGroup | null
+  teacher_name: string | null   
   date_of_birth: string | null
   notes: string | null
   created_at: string

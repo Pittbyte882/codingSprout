@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { createServerSupabaseClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function EnrollmentsPage() {
-  const supabase = await createServerSupabaseClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
