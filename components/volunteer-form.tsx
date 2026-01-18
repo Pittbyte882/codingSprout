@@ -89,14 +89,25 @@ export function VolunteerForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="experience">Relevant Experience</Label>
-        <Textarea
-          id="experience"
-          name="experience"
-          rows={3}
-          placeholder="Tell us about any relevant experience (teaching, coding, working with kids, etc.)"
-        />
-      </div>
+  <Label htmlFor="experience">Relevant Experience</Label>
+  <Textarea
+    id="experience"
+    name="experience"
+    rows={3}
+    placeholder="Tell us about any relevant experience (teaching, coding, working with kids, etc.)"
+  />
+  <p className="text-sm text-muted-foreground">
+    <span className="text-red-500">*</span> All volunteers must complete a{" "}
+    <a 
+      href="https://www.cdss.ca.gov/inforesources/community-care/caregiver-background-check/livescan#:~:text=Electronic%20fingerprinting%20technology%20has%20replaced,Community%20Care%20Licensing%20Division%20office."
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-sky-blue hover:text-sprout-green underline font-medium"
+    >
+      Live Scan Background Check
+    </a>
+  </p>
+</div>
 
       <div className="space-y-2">
         <Label htmlFor="motivation">Why do you want to volunteer?</Label>
