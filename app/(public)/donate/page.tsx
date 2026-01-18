@@ -41,6 +41,16 @@ export default function DonatePage() {
               Your donation helps us provide quality coding education to children in our community, regardless of their
               financial situation.
             </p>
+            
+            {/* Donate Button - Added here */}
+            <div className="mt-8">
+              <Link href="/donate/checkout">
+                <Button size="lg" className="bg-primary hover:bg-sprout-green-dark text-lg px-12 py-6 h-auto">
+                  <Heart className="mr-2 h-5 w-5" />
+                  Donate Now
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -78,7 +88,7 @@ export default function DonatePage() {
           </p>
           <div className="mt-8">
             <Link href="/donate/checkout">
-              <Button size="lg" className="bg-primary hover:bg-sprout-green-dark text-lg px-8">
+              <Button size="lg" className="bg-primary hover:bg-sprout-green-dark text-lg px-12 py-6 h-auto">
                 <Heart className="mr-2 h-5 w-5" />
                 Donate Now
               </Button>
