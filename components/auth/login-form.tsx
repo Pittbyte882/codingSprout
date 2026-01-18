@@ -43,43 +43,43 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" autoComplete="email" required placeholder="you@example.com" />
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <a href="/forgot-password" className="text-sm text-primary hover:text-sprout-green-dark">
-              Forgot password?
-            </a>
-          </div>
-          <div className="relative">
-            <Input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              required
-              placeholder="Enter your password"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
+  <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" name="email" type="email" autoComplete="email" required placeholder="you@example.com" />
       </div>
 
-      <Button type="submit" className="w-full bg-primary hover:bg-sprout-green-dark" disabled={isLoading}>
-        {isLoading ? "Signing in..." : "Sign In"}
-      </Button>
-    </form>
-  )
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Password</Label>
+          <a href="/forgot-password" className="text-sm text-primary hover:text-sprout-green-dark">
+            Forgot password?
+          </a>
+        </div>
+        <div className="relative">
+                    <Input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            required
+            placeholder="Enter your password"
+          />
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <Button type="submit" className="w-full bg-primary hover:bg-sprout-green-dark" disabled={isLoading}>
+      {isLoading ? "Signing in..." : "Sign In"}
+    </Button>
+  </form>
+)
 }
