@@ -17,7 +17,7 @@ const footerLinks = {
   ],
   support: [
     { label: "Volunteer", href: "/volunteer" },
-    { label: "Donate", href: "/donate" },
+    { label: "Sponsor a Student", href: "/sponsor" },
     { label: "FAQ", href: "/faq" },
     { label: "Privacy Policy", href: "/privacy" },
   ],

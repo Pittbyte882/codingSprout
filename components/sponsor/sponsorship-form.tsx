@@ -1,20 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select"
 import { toast } from "sonner"
-import { Heart, Check, CreditCard, Building2, User, DollarSign } from "lucide-react"
+import { Heart, Check, DollarSign, CreditCard, Loader2 } from "lucide-react"
 
 const PRESET_AMOUNTS = [
   { value: 50, label: "$50", description: "Supplies for one student" },
@@ -23,26 +15,10 @@ const PRESET_AMOUNTS = [
   { value: 250, label: "$250", description: "Full scholarship" },
 ]
 
-const CARD_TYPES = [
-  { value: "visa", label: "Visa" },
-  { value: "mastercard", label: "Mastercard" },
-  { value: "amex", label: "American Express" },
-  { value: "discover", label: "Discover" },
-]
-
-const US_STATES = [
-  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
-]
-
-export function DonationForm() {
-  const router = useRouter()
+export function SponsorshipForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   
-  // Donation amount state
+  // Sponsorship amount state
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState("")
   const [isCustom, setIsCustom] = useState(false)
@@ -55,23 +31,12 @@ export function DonationForm() {
   const [isFromOrganization, setIsFromOrganization] = useState(false)
   const [organizationName, setOrganizationName] = useState("")
   
-  // Billing info state
-  const [formData, setFormData] = useState({
+  // Sponsor info state
+  const [sponsorInfo, setSponsorInfo] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    cardType: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    billingAddress: "",
-    city: "",
-    state: "",
-    zipCode: "",
   })
-  
-  // Remember card state
-  const [rememberCard, setRememberCard] = useState(false)
 
   // Calculate total
   const totalAmount = isCustom 
@@ -89,38 +54,16 @@ export function DonationForm() {
     setSelectedAmount(null)
   }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "")
-    const matches = v.match(/\d{4,16}/g)
-    const match = (matches && matches[0]) || ""
-    const parts = []
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4))
-    }
-    if (parts.length) {
-      return parts.join(" ")
-    } else {
-      return value
-    }
-  }
-
-  const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "")
-    if (v.length >= 2) {
-      return v.substring(0, 2) + "/" + v.substring(2, 4)
-    }
-    return v
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (totalAmount <= 0) {
-      toast.error("Please select or enter a donation amount")
+      toast.error("Please select or enter a sponsorship amount")
+      return
+    }
+
+    if (totalAmount < 1) {
+      toast.error("Minimum sponsorship amount is $1")
       return
     }
 
@@ -129,23 +72,45 @@ export function DonationForm() {
       return
     }
 
-    if (rememberCard) {
-      // Redirect to create account page
-      toast.info("Please create an account to save your card information")
-      router.push("/register")
+    if (isFromOrganization && !organizationName.trim()) {
+      toast.error("Please enter the organization name")
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      // Here you would integrate with Stripe, Square, or your payment processor
-      // For now, we'll simulate a successful donation
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      toast.success(`Thank you for your generous donation of $${totalAmount.toFixed(2)}!`)
-      router.push("/donate/thank-you")
-    } catch {
+      // Create Stripe Checkout Session
+      const response = await fetch("/api/checkout/sponsor", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: totalAmount,
+          studentName: isDedicatedToStudent ? studentName : null,
+          organizationName: isFromOrganization ? organizationName : null,
+          sponsorEmail: sponsorInfo.email,
+          sponsorFirstName: sponsorInfo.firstName,
+          sponsorLastName: sponsorInfo.lastName,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.error) {
+        toast.error(data.error)
+        return
+      }
+
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        toast.error("Failed to create checkout session")
+      }
+    } catch (error) {
+      console.error("Checkout error:", error)
       toast.error("Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
@@ -154,11 +119,11 @@ export function DonationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Donation Amount Section */}
+      {/* Sponsorship Amount Section */}
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-border">
         <div className="flex items-center gap-2 mb-6">
           <DollarSign className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-deep-navy">Select Donation Amount</h2>
+          <h2 className="text-xl font-semibold text-deep-navy">Select Sponsorship Amount</h2>
         </div>
         
         {/* Preset Amounts */}
@@ -246,10 +211,10 @@ export function DonationForm() {
             />
             <div className="space-y-1">
               <label htmlFor="dedicateToStudent" className="text-sm font-medium cursor-pointer">
-                Dedicate this donation to a specific student
+                Sponsor a specific student
               </label>
               <p className="text-xs text-muted-foreground">
-                Your donation will be directed to support this student's education
+                Your sponsorship will be directed to support this student's education
               </p>
             </div>
           </div>
@@ -277,7 +242,7 @@ export function DonationForm() {
             />
             <div className="space-y-1">
               <label htmlFor="fromOrganization" className="text-sm font-medium cursor-pointer">
-                Donating on behalf of an organization
+                Sponsoring on behalf of an organization
               </label>
               <p className="text-xs text-muted-foreground">
                 Include your organization's name for recognition
@@ -299,194 +264,66 @@ export function DonationForm() {
         </div>
       </div>
 
-      {/* Billing Information */}
+      {/* Sponsor Information (Optional - for receipt) */}
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-border">
-        <div className="flex items-center gap-2 mb-6">
-          <User className="h-5 w-5 text-primary" />
+        <div className="flex items-center gap-2 mb-2">
+          <CreditCard className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold text-deep-navy">Your Information</h2>
         </div>
+        <p className="text-sm text-muted-foreground mb-6">
+          Optional - for your receipt. Payment details will be collected securely by Stripe.
+        </p>
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
+              <Label htmlFor="firstName">First Name</Label>
               <Input
                 id="firstName"
-                value={formData.firstName}
-                onChange={(e) => handleInputChange("firstName", e.target.value)}
-                required
+                value={sponsorInfo.firstName}
+                onChange={(e) => setSponsorInfo(prev => ({ ...prev, firstName: e.target.value }))}
+                placeholder="First name"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
+              <Label htmlFor="lastName">Last Name</Label>
               <Input
                 id="lastName"
-                value={formData.lastName}
-                onChange={(e) => handleInputChange("lastName", e.target.value)}
-                required
+                value={sponsorInfo.lastName}
+                onChange={(e) => setSponsorInfo(prev => ({ ...prev, lastName: e.target.value }))}
+                placeholder="Last name"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address *</Label>
+            <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
               type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
+              value={sponsorInfo.email}
+              onChange={(e) => setSponsorInfo(prev => ({ ...prev, email: e.target.value }))}
               placeholder="you@example.com"
-              required
             />
-          </div>
-        </div>
-      </div>
-
-      {/* Payment Information */}
-      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-border">
-        <div className="flex items-center gap-2 mb-6">
-          <CreditCard className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-deep-navy">Payment Information</h2>
-        </div>
-
-        <div className="space-y-4">
-          {/* Card Type */}
-          <div className="space-y-2">
-            <Label htmlFor="cardType">Card Type *</Label>
-            <Select
-              value={formData.cardType}
-              onValueChange={(value) => handleInputChange("cardType", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select card type" />
-              </SelectTrigger>
-              <SelectContent>
-                {CARD_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Card Number */}
-          <div className="space-y-2">
-            <Label htmlFor="cardNumber">Card Number *</Label>
-            <Input
-              id="cardNumber"
-              value={formData.cardNumber}
-              onChange={(e) => handleInputChange("cardNumber", formatCardNumber(e.target.value))}
-              placeholder="1234 5678 9012 3456"
-              maxLength={19}
-              required
-            />
-          </div>
-
-          {/* Expiry and CVV */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="expiryDate">Expiry Date *</Label>
-              <Input
-                id="expiryDate"
-                value={formData.expiryDate}
-                onChange={(e) => handleInputChange("expiryDate", formatExpiryDate(e.target.value))}
-                placeholder="MM/YY"
-                maxLength={5}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cvv">CVV *</Label>
-              <Input
-                id="cvv"
-                value={formData.cvv}
-                onChange={(e) => handleInputChange("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))}
-                placeholder="123"
-                maxLength={4}
-                required
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Billing Address */}
-      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-border">
-        <div className="flex items-center gap-2 mb-6">
-          <Building2 className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-deep-navy">Billing Address</h2>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="billingAddress">Street Address *</Label>
-            <Input
-              id="billingAddress"
-              value={formData.billingAddress}
-              onChange={(e) => handleInputChange("billingAddress", e.target.value)}
-              placeholder="123 Main Street"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="city">City *</Label>
-              <Input
-                id="city"
-                value={formData.city}
-                onChange={(e) => handleInputChange("city", e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="state">State *</Label>
-              <Select
-                value={formData.state}
-                onValueChange={(value) => handleInputChange("state", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="State" />
-                </SelectTrigger>
-                <SelectContent>
-                  {US_STATES.map((state) => (
-                    <SelectItem key={state} value={state}>
-                      {state}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2 col-span-2 sm:col-span-1">
-              <Label htmlFor="zipCode">ZIP Code *</Label>
-              <Input
-                id="zipCode"
-                value={formData.zipCode}
-                onChange={(e) => handleInputChange("zipCode", e.target.value.replace(/\D/g, "").slice(0, 5))}
-                placeholder="12345"
-                maxLength={5}
-                required
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Remember Card Option */}
-      <div className="rounded-2xl bg-sky-blue/10 p-6 ring-1 ring-sky-blue/20">
-        <div className="flex items-start space-x-3">
-          <Checkbox
-            id="rememberCard"
-            checked={rememberCard}
-            onCheckedChange={(checked) => setRememberCard(checked as boolean)}
-          />
-          <div className="space-y-1">
-            <label htmlFor="rememberCard" className="text-sm font-medium cursor-pointer text-deep-navy">
-              Save my card for future donations
-            </label>
             <p className="text-xs text-muted-foreground">
-              You'll be prompted to create an account to securely save your payment information
+              We'll send your receipt to this email
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Secure Payment Notice */}
+      <div className="rounded-2xl bg-sky-blue/10 p-6 ring-1 ring-sky-blue/20">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 bg-sky-blue/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-sky-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <div>
+            <p className="font-medium text-deep-navy">Secure Payment with Stripe</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Your payment information is encrypted and processed securely. We accept all major credit cards, Apple Pay, and Google Pay.
             </p>
           </div>
         </div>
@@ -494,16 +331,16 @@ export function DonationForm() {
 
       {/* Order Summary & Submit */}
       <div className="rounded-2xl bg-secondary p-6 text-secondary-foreground">
-        <h2 className="text-xl font-semibold mb-4">Donation Summary</h2>
+        <h2 className="text-xl font-semibold mb-4">Sponsorship Summary</h2>
         
         <div className="space-y-2 mb-6">
           <div className="flex justify-between text-secondary-foreground/80">
-            <span>Donation Amount</span>
+            <span>Sponsorship Amount</span>
             <span>${totalAmount.toFixed(2)}</span>
           </div>
           {isDedicatedToStudent && studentName && (
             <div className="flex justify-between text-secondary-foreground/80 text-sm">
-              <span>Dedicated to</span>
+              <span>Sponsoring</span>
               <span>{studentName}</span>
             </div>
           )}
@@ -528,17 +365,20 @@ export function DonationForm() {
           className="w-full bg-primary hover:bg-sprout-green-dark text-lg py-6 h-auto"
         >
           {isSubmitting ? (
-            "Processing..."
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Redirecting to Checkout...
+            </>
           ) : (
             <>
               <Heart className="mr-2 h-5 w-5" />
-              Donate ${totalAmount.toFixed(2)}
+              Sponsor ${totalAmount.toFixed(2)}
             </>
           )}
         </Button>
 
         <p className="text-center text-xs text-secondary-foreground/60 mt-4">
-          Your donation is secure and encrypted. Coding Sprout is a registered 501(c)(3) organization.
+          Powered by Stripe • Secure payment processing
         </p>
       </div>
     </form>

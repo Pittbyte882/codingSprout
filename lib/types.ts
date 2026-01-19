@@ -132,16 +132,33 @@ export interface GalleryItem {
   created_at: string
 }
 
-export interface Donation {
+// Sponsorship types
+export interface Sponsorship {
   id: string
-  donor_name: string | null
-  donor_email: string | null
+  user_id: string | null
   amount: number
-  amount_cents?: number
-  stripe_payment_intent_id: string | null
-  message: string | null
-  is_anonymous: boolean
+  student_name: string | null
+  organization_name: string | null
+  sponsor_first_name: string
+  sponsor_last_name: string
+  sponsor_email: string
+  billing_address: string | null
+  billing_city: string | null
+  billing_state: string | null
+  billing_zip: string | null
+  status: 'pending' | 'completed' | 'failed' | 'refunded'
+  payment_method: string
+  payment_intent_id: string | null
   created_at: string
+  updated_at: string
+}
+
+export interface SponsorshipStats {
+  totalAmount: number
+  totalCount: number
+  thisMonthAmount: number
+  thisMonthCount: number
+  averageSponsorship: number
 }
 
 export interface ContactSubmission {
