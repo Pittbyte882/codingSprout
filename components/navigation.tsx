@@ -13,11 +13,10 @@ const navItems = [
   { label: "About Us", href: "/about" },
   { label: "Our Approach", href: "/approach" },
   { label: "Gallery", href: "/gallery" },
-  { label: "Volunteer", href: "/volunteer" },
+   { label: "Join Our Team", href: "/careers" },  // HIDDEN - Uncomment when ready to hire
   { label: "Sponsor", href: "/sponsor" },
   { label: "Contact", href: "/contact" },
 ]
-
 // Hidden items that can be enabled later
 const hiddenItems = [
   { label: "Store", href: "/store", hidden: true },

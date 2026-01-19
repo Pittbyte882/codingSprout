@@ -16,7 +16,7 @@ const footerLinks = {
     { label: "Contact", href: "/contact" },
   ],
   support: [
-    { label: "Volunteer", href: "/volunteer" },
+     { label: "Join Our Team", href: "/careers" },  // HIDDEN - Uncomment when ready to hire
     { label: "Sponsor a Student", href: "/sponsor" },
     { label: "FAQ", href: "/faq" },
     { label: "Privacy Policy", href: "/privacy" },
