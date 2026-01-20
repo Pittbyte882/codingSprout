@@ -37,7 +37,7 @@ const placeholderImages = [
   { 
     id: 6, 
     title: "Group collaboration", 
-    image: "https://images.unsplash.com/photo-1544717684-61ff7fd22834?w=800&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=800&fit=crop"
   },
 ]
 
