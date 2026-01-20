@@ -1,5 +1,7 @@
-// Email notification templates and utilities for Coding Sprout
-// This can be integrated with Resend, SendGrid, or other email providers
+/// lib/email.ts
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export interface EmailData {
   to: string
@@ -38,7 +40,7 @@ export function getWelcomeEmailHtml(name: string): string {
             <li>Register for upcoming sessions</li>
           </ul>
           <p>We accept both credit card payments and charter school funds.</p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/classes" class="button">Browse Classes</a>
+          <a href="${process.env.NEXT_PUBLIC_SITE_URL}/classes" class="button">Browse Classes</a>
         </div>
         <div class="footer">
           <p>Coding Sprout - Helping Kids Grow Into Confident Coders</p>
@@ -226,22 +228,25 @@ export function getCharterPendingHtml(data: {
   `
 }
 
-// Utility function to send emails (integrate with your email provider)
+// Utility function to send emails with Resend
 export async function sendEmail(emailData: EmailData): Promise<boolean> {
-  // TODO: Integrate with email provider (Resend, SendGrid, etc.)
-  // Example with Resend:
-  // const resend = new Resend(process.env.RESEND_API_KEY)
-  // await resend.emails.send({
-  //   from: 'Coding Sprout <noreply@codingsprout.com>',
-  //   to: emailData.to,
-  //   subject: emailData.subject,
-  //   html: emailData.html
-  // })
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'Coding Sprout <hello@codingsprout.com>',
+      to: emailData.to,
+      subject: emailData.subject,
+      html: emailData.html,
+    })
 
-  console.log("Email would be sent:", {
-    to: emailData.to,
-    subject: emailData.subject,
-  })
+    if (error) {
+      console.error('Resend error:', error)
+      return false
+    }
 
-  return true
+    console.log('Email sent successfully:', data)
+    return true
+  } catch (error) {
+    console.error('Failed to send email:', error)
+    return false
+  }
 }

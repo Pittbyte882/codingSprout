@@ -134,6 +134,7 @@ export async function registerForClass(formData: FormData) {
       return { success: false, error: "Registration failed" }
     }
 
+    // Send charter pending email to parent
     if (profile?.email && student) {
       await sendEmail({
         to: profile.email,
@@ -144,6 +145,28 @@ export async function registerForClass(formData: FormData) {
           className: classItem.name,
           charterSchoolName,
         }),
+      })
+
+      // Send notification to admin
+      await sendEmail({
+        to: "hello@codingsprout.com",
+        subject: `New Charter School Registration - ${classItem.name}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #4CAF50;">🌱 New Charter School Registration</h2>
+            <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>Parent:</strong> ${profile?.full_name || "Unknown"} (${profile?.email})</p>
+              <p><strong>Student:</strong> ${student.first_name} ${student.last_name}</p>
+              <p><strong>Class:</strong> ${classItem.name}</p>
+              <p><strong>Charter School:</strong> ${charterSchoolName}</p>
+              <p><strong>School Contact:</strong> ${charterSchoolContact}</p>
+              <p><strong>Amount:</strong> $${amount.toFixed(2)}</p>
+              <p><strong>Session Type:</strong> ${isOneOnOne ? "One-on-One" : "Group Class"}</p>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+            <p style="color: #666; font-size: 14px;">Please process the charter school invoice and approve the registration in the admin dashboard.</p>
+          </div>
+        `,
       })
     }
 

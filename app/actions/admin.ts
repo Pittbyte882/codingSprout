@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
+import { sendEmail, getRegistrationConfirmationHtml, getPaymentReceivedHtml } from "@/lib/email"
 
 export async function saveClass(formData: FormData) {
   const supabase = await createServerSupabaseClient()
@@ -132,16 +133,76 @@ export async function updateRegistrationStatus(registrationId: string, status: s
     return { success: false, error: "Not authorized" }
   }
 
-  const { error } = await supabase.from("registrations").update({ payment_status: status }).eq("id", registrationId)
+  try {
+    // Update the registration status
+    const { data: registration, error } = await supabase
+      .from("registrations")
+      .update({
+        payment_status: status,
+      })
+      .eq("id", registrationId)
+      .select(
+        `
+        *,
+        class:classes(*),
+        student:students(*),
+        parent:profiles!registrations_parent_id_fkey(*)
+      `
+      )
+      .single()
 
-  if (error) {
+    if (error) throw error
+
+    // If charter approved, send confirmation emails
+    if (status === "charter_approved" && registration) {
+      const classData = registration.class
+      const student = registration.student
+      const parent = registration.parent
+
+      if (parent?.email) {
+        // Send payment received email
+        await sendEmail({
+          to: parent.email,
+          subject: `Payment Confirmed - ${classData?.name}`,
+          html: getPaymentReceivedHtml({
+            parentName: parent.full_name || "Parent",
+            amount: registration.amount_paid,
+            className: classData?.name || "Class",
+            paymentMethod: "charter_school",
+          }),
+        })
+
+        // Send registration confirmation email
+        await sendEmail({
+          to: parent.email,
+          subject: `Class Registration Confirmed - ${classData?.name}`,
+          html: getRegistrationConfirmationHtml({
+            parentName: parent.full_name || "Parent",
+            studentName: student?.first_name || "Student",
+            className: classData?.name || "Class",
+            classDate: new Date(classData?.start_date).toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }),
+            classTime: `${classData?.start_time} - ${classData?.end_time}`,
+            classType: classData?.is_online ? "online" : "in_person",
+            location: classData?.location,
+            zoomLink: classData?.zoom_link,
+            isOneOnOne: registration.is_one_on_one,
+            amountPaid: registration.amount_paid,
+          }),
+        })
+      }
+    }
+
+    revalidatePath("/admin/registrations")
+    return { success: true }
+  } catch (error) {
     console.error("Update registration error:", error)
     return { success: false, error: "Failed to update registration" }
   }
-
-  revalidatePath("/admin/registrations")
-
-  return { success: true }
 }
 
 export async function deleteGalleryItem(id: string) {
