@@ -12,32 +12,32 @@ const placeholderImages = [
   { 
     id: 1, 
     title: "Students learning Scratch", 
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=800&fit=crop"
   },
   { 
     id: 2, 
     title: "Game development class", 
-    image: "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?w=800&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=800&h=800&fit=crop"
   },
   { 
     id: 3, 
     title: "Coding workshop", 
-    image: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=800&h=800&fit=crop"
   },
   { 
     id: 4, 
     title: "Student project showcase", 
-    image: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1596496050755-c923e73e42e1?w=800&h=800&fit=crop"
   },
   { 
     id: 5, 
     title: "Python programming", 
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=800&fit=crop"
   },
   { 
     id: 6, 
     title: "Group collaboration", 
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1544717684-61ff7fd22834?w=800&h=800&fit=crop"
   },
 ]
 
