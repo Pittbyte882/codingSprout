@@ -7,14 +7,38 @@ export const metadata: Metadata = {
   description: "See photos of our students and their amazing coding projects at Coding Sprout.",
 }
 
-// Placeholder images for now - will be replaced with database content
+// Placeholder images - using Unsplash for high-quality stock photos
 const placeholderImages = [
-  { id: 1, title: "Students learning Scratch", query: "children learning coding on computers in classroom" },
-  { id: 2, title: "Game development class", query: "kids creating video games on laptops" },
-  { id: 3, title: "Coding workshop", query: "children at coding workshop with instructor" },
-  { id: 4, title: "Student project showcase", query: "kid proudly showing coding project on screen" },
-  { id: 5, title: "Python programming", query: "teenager learning python programming" },
-  { id: 6, title: "Group collaboration", query: "kids working together on coding project" },
+  { 
+    id: 1, 
+    title: "Students learning Scratch", 
+    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=800&fit=crop"
+  },
+  { 
+    id: 2, 
+    title: "Game development class", 
+    image: "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?w=800&h=800&fit=crop"
+  },
+  { 
+    id: 3, 
+    title: "Coding workshop", 
+    image: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=800&fit=crop"
+  },
+  { 
+    id: 4, 
+    title: "Student project showcase", 
+    image: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&h=800&fit=crop"
+  },
+  { 
+    id: 5, 
+    title: "Python programming", 
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=800&fit=crop"
+  },
+  { 
+    id: 6, 
+    title: "Group collaboration", 
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=800&fit=crop"
+  },
 ]
 
 export default async function GalleryPage() {
@@ -69,7 +93,7 @@ export default async function GalleryPage() {
               {placeholderImages.map((image) => (
                 <div key={image.id} className="group relative aspect-square overflow-hidden rounded-2xl bg-muted">
                   <Image
-                    src={`/.jpg?height=400&width=400&query=${encodeURIComponent(image.query)}`}
+                    src={image.image}
                     alt={image.title}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
