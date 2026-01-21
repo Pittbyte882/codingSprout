@@ -20,7 +20,12 @@ export default async function AdminLayout({
 
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
+  // DEBUG: Log the profile to see what role is being returned
+  console.log("Profile data:", profile)
+  console.log("Role:", profile?.role)
+
   if (profile?.role !== "admin" && profile?.role !== "instructor") {
+    console.log("Redirecting to dashboard - not admin/instructor")
     redirect("/dashboard")
   }
 
@@ -34,4 +39,3 @@ export default async function AdminLayout({
     </div>
   )
 }
-//admin layout
