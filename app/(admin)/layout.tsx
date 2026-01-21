@@ -18,14 +18,26 @@ export default async function AdminLayout({
     redirect("/login")
   }
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  // Try to get profile with error handling
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single()
 
-  // DEBUG: Log the profile to see what role is being returned
-  console.log("Profile data:", profile)
-  console.log("Role:", profile?.role)
+  console.log("User ID:", user.id)
+  console.log("Profile query result:", profile)
+  console.log("Profile query error:", profileError)
 
-  if (profile?.role !== "admin" && profile?.role !== "instructor") {
-    console.log("Redirecting to dashboard - not admin/instructor")
+  if (!profile) {
+    console.log("Profile is null, redirecting to dashboard")
+    redirect("/dashboard")
+  }
+
+  console.log("Profile role:", profile.role)
+
+  if (profile.role !== "admin" && profile.role !== "instructor") {
+    console.log("Not admin or instructor, redirecting")
     redirect("/dashboard")
   }
 
