@@ -248,3 +248,32 @@ export async function markMessageAsRead(id: string) {
 
   return { success: true }
 }
+export async function deleteClass(classId: string) {
+  const supabase = await createServerSupabaseClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { success: false, error: "Not authenticated" }
+  }
+
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+
+  if (profile?.role !== "admin" && profile?.role !== "instructor") {
+    return { success: false, error: "Not authorized" }
+  }
+
+  const { error } = await supabase.from("classes").delete().eq("id", classId)
+
+  if (error) {
+    console.error("Delete class error:", error)
+    return { success: false, error: "Failed to delete class" }
+  }
+
+  revalidatePath("/admin/classes")
+  revalidatePath("/classes")
+
+  return { success: true }
+}
