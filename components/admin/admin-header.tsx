@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -12,9 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { adminLogout } from "@/app/actions/admin-auth"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { createBrowserSupabaseClient } from "@/lib/supabase/client"
-import { toast } from "sonner"
 import {
   Menu,
   User,
@@ -30,12 +29,10 @@ import {
   HandHeart,
   Settings,
 } from "lucide-react"
-import type { User as SupabaseUser } from "@supabase/supabase-js"
-import type { Profile } from "@/lib/types"
 
 interface AdminHeaderProps {
-  user: SupabaseUser
-  profile: Profile | null
+  user: { id: string; email: string }
+  profile: { id: string; email: string; full_name: string; role: string } | null
 }
 
 const navItems = [
@@ -51,17 +48,8 @@ const navItems = [
 ]
 
 export function AdminHeader({ user, profile }: AdminHeaderProps) {
-  const router = useRouter()
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  async function handleSignOut() {
-    const supabase = createBrowserSupabaseClient()
-    await supabase.auth.signOut()
-    toast.success("Signed out successfully")
-    router.push("/")
-    router.refresh()
-  }
 
   return (
     <header className="sticky top-0 z-40 h-16 border-b border-border bg-card">
@@ -132,10 +120,14 @@ export function AdminHeader({ user, profile }: AdminHeaderProps) {
                 <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </DropdownMenuItem>
+              <form action={adminLogout}>
+                <button type="submit" className="w-full">
+                  <DropdownMenuItem className="text-destructive cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </button>
+              </form>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
