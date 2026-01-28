@@ -1,154 +1,159 @@
-"use client"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { adminLogin } from "@/app/actions/admin-auth"
-import { Sprout, Loader2, Eye, EyeOff } from "lucide-react"
+import type { Metadata } from "next"
 import Link from "next/link"
+import { createServerSupabaseClient } from "@/lib/supabase/server"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { GraduationCap, Users, Calendar, DollarSign, MessageSquare, TrendingUp, Plus, ArrowRight } from "lucide-react"
 
-export default function AdminLoginPage() {
-  const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+export const metadata: Metadata = {
+  title: "Admin Dashboard | Coding Sprout",
+  description: "Manage Coding Sprout classes, students, and registrations.",
+}
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError(null)
-    setIsLoading(true)
+export default async function AdminDashboardPage() {
+  const supabase = await createServerSupabaseClient()
 
-    const formData = new FormData(e.currentTarget)
-    const result = await adminLogin(formData)
+  // Get counts
+  const [
+    { count: classCount },
+    { count: registrationCount },
+    { count: eventCount },
+    { count: messageCount },
+    { data: recentRegistrations },
+    { data: pendingCharterPayments },
+  ] = await Promise.all([
+    supabase.from("classes").select("*", { count: "exact", head: true }).eq("is_published", true),
+    supabase.from("registrations").select("*", { count: "exact", head: true }),
+    supabase
+      .from("events")
+      .select("*", { count: "exact", head: true })
+      .eq("is_published", true)
+      .gte("event_date", new Date().toISOString().split("T")[0]),
+    supabase.from("contact_submissions").select("*", { count: "exact", head: true }).eq("is_read", false),
+    supabase
+      .from("registrations")
+      .select("*, class:classes(name), student:students(full_name), parent:profiles(full_name, email)")
+      .order("registered_at", { ascending: false })
+      .limit(5),
+    supabase
+      .from("registrations")
+      .select("*, class:classes(name), student:students(full_name), parent:profiles(full_name, email)")
+      .eq("payment_status", "charter_pending")
+      .order("registered_at", { ascending: false }),
+  ])
 
-    if (result.success) {
-      router.push("/admin")
-      router.refresh()
-    } else {
-      setError(result.error || "Login failed")
-      setIsLoading(false)
-    }
-  }
+  const stats = [
+    { label: "Active Classes", value: classCount || 0, icon: GraduationCap, href: "/admin/classes" },
+    { label: "Total Registrations", value: registrationCount || 0, icon: Users, href: "/admin/registrations" },
+    { label: "Upcoming Events", value: eventCount || 0, icon: Calendar, href: "/admin/events" },
+    { label: "Unread Messages", value: messageCount || 0, icon: MessageSquare, href: "/admin/messages" },
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-deep-navy via-deep-navy to-slate-800 flex items-center justify-center p-4">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-sprout-green/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-sky-blue/10 rounded-full blur-3xl" />
+    <div className="mx-auto max-w-7xl space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
+          <p className="mt-1 text-muted-foreground">Manage your Coding Sprout platform</p>
+        </div>
+        <Link href="/admin/classes/new">
+          <Button className="bg-primary hover:bg-sprout-green-dark">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Class
+          </Button>
+        </Link>
       </div>
 
-      <div className="relative w-full max-w-md">
-        {/* Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          {/* Logo and Header */}
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-sprout-green rounded-xl flex items-center justify-center">
-                <Sprout className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-deep-navy font-heading">
-                Coding Sprout
-              </span>
-            </Link>
-            <h1 className="text-2xl font-bold text-deep-navy font-heading">
-              Admin Portal
-            </h1>
-            <p className="text-dark-gray mt-2">
-              Sign in to access the admin dashboard
-            </p>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm text-center">{error}</p>
-            </div>
-          )}
-
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-deep-navy mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="w-full px-4 py-3 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-sprout-green focus:border-transparent transition-all duration-200 text-deep-navy placeholder:text-dark-gray/50"
-                placeholder="admin@codingsprout.com"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-deep-navy mb-2"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  className="w-full px-4 py-3 border border-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-sprout-green focus:border-transparent transition-all duration-200 text-deep-navy placeholder:text-dark-gray/50 pr-12"
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-gray hover:text-deep-navy transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-sprout-green hover:bg-sprout-green-dark text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-sprout-green/25 hover:shadow-xl hover:shadow-sprout-green/30"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-          </form>
-
-          {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-light-gray">
-            <p className="text-center text-sm text-dark-gray">
-              This is a restricted area for authorized personnel only.
-            </p>
-          </div>
-        </div>
-
-        {/* Back to main site link */}
-        <div className="text-center mt-6">
-          <Link
-            href="/"
-            className="text-white/70 hover:text-white text-sm transition-colors"
-          >
-            ← Back to Coding Sprout
+      {/* Stats */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <Link key={stat.label} href={stat.href}>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
+                <stat.icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+              </CardContent>
+            </Card>
           </Link>
-        </div>
+        ))}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Pending Charter Payments */}
+        {pendingCharterPayments && pendingCharterPayments.length > 0 && (
+          <Card className="border-warm-yellow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-warm-yellow" />
+                Pending Charter Payments
+              </CardTitle>
+              <CardDescription>Registrations awaiting charter school approval</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {pendingCharterPayments.map((reg: any) => (
+                  <div key={reg.id} className="flex items-center justify-between rounded-lg border p-3">
+                    <div>
+                      <p className="font-medium">{reg.student?.full_name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {reg.class?.name} - {reg.charter_school_name}
+                      </p>
+                    </div>
+                    <Link href={`/admin/registrations/${reg.id}`}>
+                      <Button size="sm" variant="outline">
+                        Review
+                      </Button>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Recent Registrations */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Recent Registrations
+              </CardTitle>
+              <CardDescription>Latest class enrollments</CardDescription>
+            </div>
+            <Link href="/admin/registrations">
+              <Button variant="ghost" size="sm">
+                View All
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            {recentRegistrations && recentRegistrations.length > 0 ? (
+              <div className="space-y-4">
+                {recentRegistrations.map((reg: any) => (
+                  <div key={reg.id} className="flex items-center justify-between rounded-lg border p-3">
+                    <div>
+                      <p className="font-medium">{reg.student?.full_name}</p>
+                      <p className="text-sm text-muted-foreground">{reg.class?.name}</p>
+                    </div>
+                    <span
+                      className={`text-xs font-medium ${reg.payment_status === "paid" ? "text-primary" : "text-muted-foreground"}`}
+                    >
+                      {reg.payment_status.replace("_", " ")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-4">No registrations yet</p>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
