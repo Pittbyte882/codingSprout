@@ -176,65 +176,87 @@ export function RegisterForm() {
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    
-    if (!validateStep(currentStep)) return
-    
-    setIsLoading(true)
+  e.preventDefault()
+  
+  if (!validateStep(currentStep)) return
+  
+  setIsLoading(true)
 
-    const supabase = createClient()
+  const supabase = createClient()
 
-    try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-          data: {
-            full_name: `${formData.parentFirstName} ${formData.parentLastName}`,
-            first_name: formData.parentFirstName,
-            last_name: formData.parentLastName,
-            phone: formData.phone,
-            payment_type: formData.paymentType,
-            school_id: formData.paymentType === 'school_funds' && formData.schoolId !== 'other' 
-              ? formData.schoolId 
-              : null,
-            other_school_name: formData.schoolId === 'other' ? formData.otherSchoolName : null,
-          },
+  try {
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+        data: {
+          full_name: `${formData.parentFirstName} ${formData.parentLastName}`,
+          first_name: formData.parentFirstName,
+          last_name: formData.parentLastName,
+          phone: formData.phone,
+          payment_type: formData.paymentType,
+          school_id: formData.paymentType === 'school_funds' && formData.schoolId !== 'other' 
+            ? formData.schoolId 
+            : null,
+          other_school_name: formData.schoolId === 'other' ? formData.otherSchoolName : null,
         },
-      })
+      },
+    })
 
-      if (authError) throw authError
+    if (authError) throw authError
 
-      if (authData.user) {
-        const { error: studentError } = await supabase
-          .from('students')
-          .insert({
-            parent_id: authData.user.id,
-            full_name: `${formData.studentFirstName} ${formData.studentLastName}`,
-            first_name: formData.studentFirstName,
-            last_name: formData.studentLastName,
-            age_group: formData.ageGroup,
-            grade_level: formData.ageGroup,
-            teacher_name: formData.paymentType === 'school_funds' ? formData.teacherName : null,
-          })
+    if (authData.user) {
+      // Create student record
+      const { error: studentError } = await supabase
+        .from('students')
+        .insert({
+          parent_id: authData.user.id,
+          full_name: `${formData.studentFirstName} ${formData.studentLastName}`,
+          first_name: formData.studentFirstName,
+          last_name: formData.studentLastName,
+          age_group: formData.ageGroup,
+          grade_level: formData.ageGroup,
+          teacher_name: formData.paymentType === 'school_funds' ? formData.teacherName : null,
+        })
 
-        if (studentError) {
-          console.error('Error creating student:', studentError)
-          toast.error('Account created but there was an issue saving student info. Please update in your dashboard.')
-        }
+      if (studentError) {
+        console.error('Error creating student:', studentError)
+        toast.error('Account created but there was an issue saving student info. Please update in your dashboard.')
       }
 
-      toast.success("Account created! Please check your email to verify your account.")
-      router.push("/login")
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
-      toast.error(errorMessage)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+      // Send welcome email via server action
+      try {
+        const response = await fetch('/api/send-welcome-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: authData.user.id,
+            email: formData.email,
+            parentName: `${formData.parentFirstName} ${formData.parentLastName}`,
+          }),
+        })
 
+        if (!response.ok) {
+          console.error('Failed to send welcome email')
+        }
+      } catch (emailError) {
+        console.error('Error sending welcome email:', emailError)
+        // Don't show error to user - account was created successfully
+      }
+    }
+
+    toast.success("Account created! Please check your email to verify your account.")
+    router.push("/login")
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+    toast.error(errorMessage)
+  } finally {
+    setIsLoading(false)
+  }
+}
   const inputClass = (fieldName: string) => `
     ${errors[fieldName] ? 'border-red-500 focus:ring-red-500' : ''}
   `
