@@ -10,6 +10,7 @@ import {
   Calendar,
   ImageIcon,
   MessageSquare,
+  Mail,
   Heart,
   HandHeart,
   Settings,
@@ -27,6 +28,7 @@ const navItems = [
   { label: "Events", href: "/admin/events", icon: Calendar },
   { label: "Gallery", href: "/admin/gallery", icon: ImageIcon },
   { label: "Contact Messages", href: "/admin/messages", icon: MessageSquare },
+  { label: "Contact Submissions", href: "/admin/contacts", icon: Mail }, // NEW LINE
   { label: "Donations", href: "/admin/donations", icon: Heart },
   { label: "Volunteers", href: "/admin/volunteers", icon: HandHeart },
   { label: "Settings", href: "/admin/settings", icon: Settings },
