@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Turtle - Learn Python Drawing!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 3em;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        
+        .lesson-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 15px 25px;
+            border: none;
+            background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            opacity: 0.6;
+        }
+        
+        .tab-button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+        
+        .tab-button.active {
+            opacity: 1;
+            box-shadow: 0 8px 20px rgba(0, 147, 233, 0.6);
+        }
+        
+        .lesson-content {
+            display: none;
+        }
+        
+        .lesson-content.active {
+            display: block;
+        }
+        
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .lesson-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .code-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .explanation {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #f59e0b;
+        }
+        
+        .code-editor {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin-bottom: 20px;
+            min-height: 300px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        textarea.code-editor {
+            width: 100%;
+            border: none;
+            resize: vertical;
+        }
+        
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .number { color: #f78c6c; }
+        .comment { color: #697098; font-style: italic; }
+        .function { color: #82aaff; }
+        
+        canvas {
+            border: 4px solid #0093E9;
+            border-radius: 15px;
+            background: white;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .run-button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .run-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+        
+        .clear-button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .challenge {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 5px solid #3b82f6;
+        }
+        
+        .examples {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #10b981;
+        }
+        
+        .example-button {
+            padding: 10px 20px;
+            background: #0093E9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+        
+        .example-button:hover {
+            background: #0077c2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐢 Python Turtle Drawing! 🎨</h1>
+        <p class="subtitle">Learn Python by creating beautiful drawings with code!</p>
+        
+        <div class="lesson-tabs">
+            <button class="tab-button active" onclick="showLesson(1)">Lesson 1: Basic Commands</button>
+            <button class="tab-button" onclick="showLesson(2)">Lesson 2: Loops & Shapes</button>
+            <button class="tab-button" onclick="showLesson(3)">Lesson 3: Functions</button>
+            <button class="tab-button" onclick="showLesson(4)">Lesson 4: Your Art!</button>
+        </div>
+        
+        <!-- LESSON 1: Basic Commands -->
+        <div id="lesson1" class="lesson-content active">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🎯 Lesson 1: Turtle Basics</h3>
+                    <div class="explanation">
+                        <strong>The turtle starts in the center!</strong><br>
+                        You give it commands to move forward, turn, and change colors. It's like giving directions to a robot that draws!
+                    </div>
+                    
+                    <h4>Python Commands:</h4>
+                    <pre class="code-editor" style="min-height: auto;"><code><span class="function">forward</span>(<span class="number">100</span>)   <span class="comment"># Move forward 100 pixels</span>
+<span class="function">right</span>(<span class="number">90</span>)      <span class="comment"># Turn right 90 degrees</span>
+<span class="function">left</span>(<span class="number">45</span>)       <span class="comment"># Turn left 45 degrees</span>
+<span class="function">pencolor</span>(<span class="string">"red"</span>) <span class="comment"># Change pen color</span>
+<span class="function">pensize</span>(<span class="number">3</span>)      <span class="comment"># Change pen thickness</span></code></pre>
+                    
+                    <div class="examples">
+                        <h4>Try These Examples:</h4>
+                        <button class="example-button" onclick="loadExample1('square')">Draw a Square</button>
+                        <button class="example-button" onclick="loadExample1('triangle')">Draw a Triangle</button>
+                        <button class="example-button" onclick="loadExample1('star')">Draw a Star</button>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        • Function calls with parameters<br>
+                        • Sequential execution<br>
+                        • Angles and geometry<br>
+                        • Coordinate systems
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas1" width="600" height="600"></canvas>
+                    <textarea class="code-editor" id="code1" rows="10">forward(100)
+right(90)
+forward(100)
+right(90)
+forward(100)
+right(90)
+forward(100)</textarea>
+                    <div class="button-group">
+                        <button class="run-button" onclick="runCode1()">▶️ Run Code</button>
+                        <button class="clear-button" onclick="clearCanvas1()">🗑️ Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 2: Loops -->
+        <div id="lesson2" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🔁 Lesson 2: Loops Make it Easy!</h3>
+                    <div class="explanation">
+                        <strong>Loops repeat code automatically!</strong><br>
+                        Instead of writing the same line 10 times, use a for loop. This is one of Python's most powerful features!
+                    </div>
+                    
+                    <h4>For Loops in Python:</h4>
+                    <pre class="code-editor" style="min-height: auto;"><code><span class="keyword">for</span> i <span class="keyword">in range</span>(<span class="number">4</span>):
+    <span class="function">forward</span>(<span class="number">100</span>)
+    <span class="function">right</span>(<span class="number">90</span>)
+<span class="comment"># This draws a square with just 4 lines!</span>
+
+<span class="keyword">for</span> i <span class="keyword">in range</span>(<span class="number">360</span>):
+    <span class="function">forward</span>(<span class="number">1</span>)
+    <span class="function">right</span>(<span class="number">1</span>)
+<span class="comment"># This draws a circle!</span></code></pre>
+                    
+                    <div class="examples">
+                        <h4>Try These Examples:</h4>
+                        <button class="example-button" onclick="loadExample2('hexagon')">Hexagon</button>
+                        <button class="example-button" onclick="loadExample2('spiral')">Spiral</button>
+                        <button class="example-button" onclick="loadExample2('flower')">Flower</button>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        • For loops with range()<br>
+                        • Indentation in Python<br>
+                        • Creating complex patterns<br>
+                        • Mathematical patterns
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas2" width="600" height="600"></canvas>
+                    <textarea class="code-editor" id="code2" rows="10">for i in range(6):
+    forward(100)
+    right(60)</textarea>
+                    <div class="button-group">
+                        <button class="run-button" onclick="runCode2()">▶️ Run Code</button>
+                        <button class="clear-button" onclick="clearCanvas2()">🗑️ Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 3: Functions -->
+        <div id="lesson3" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>⚙️ Lesson 3: Create Your Own Functions!</h3>
+                    <div class="explanation">
+                        <strong>Functions let you reuse code!</strong><br>
+                        Define a function once, then call it many times. You can even pass different values to make it flexible!
+                    </div>
+                    
+                    <h4>Defining Functions:</h4>
+                    <pre class="code-editor" style="min-height: auto;"><code><span class="keyword">def</span> <span class="function">draw_square</span>(size):
+    <span class="keyword">for</span> i <span class="keyword">in range</span>(<span class="number">4</span>):
+        <span class="function">forward</span>(size)
+        <span class="function">right</span>(<span class="number">90</span>)
+
+<span class="comment"># Now use it!</span>
+<span class="function">draw_square</span>(<span class="number">50</span>)
+<span class="function">draw_square</span>(<span class="number">100</span>)
+<span class="function">draw_square</span>(<span class="number">150</span>)</code></pre>
+                    
+                    <div class="examples">
+                        <h4>Try These Examples:</h4>
+                        <button class="example-button" onclick="loadExample3('squares')">Multiple Squares</button>
+                        <button class="example-button" onclick="loadExample3('stars')">Star Pattern</button>
+                        <button class="example-button" onclick="loadExample3('rainbow')">Rainbow Circles</button>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        • Defining functions with def<br>
+                        • Parameters and arguments<br>
+                        • Code reusability<br>
+                        • Abstraction concepts
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas3" width="600" height="600"></canvas>
+                    <textarea class="code-editor" id="code3" rows="12">def draw_square(size):
+    for i in range(4):
+        forward(size)
+        right(90)
+
+draw_square(50)
+forward(60)
+draw_square(100)</textarea>
+                    <div class="button-group">
+                        <button class="run-button" onclick="runCode3()">▶️ Run Code</button>
+                        <button class="clear-button" onclick="clearCanvas3()">🗑️ Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 4: Your Art -->
+        <div id="lesson4" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🎨 Lesson 4: Create Your Art!</h3>
+                    <div class="explanation">
+                        <strong>Now it's your turn to be creative!</strong><br>
+                        Use everything you learned to create your own unique artwork. Experiment with colors, shapes, and patterns!
+                    </div>
+                    
+                    <h4>All Available Commands:</h4>
+                    <pre class="code-editor" style="min-height: auto;"><code><span class="function">forward</span>(distance)
+<span class="function">backward</span>(distance)
+<span class="function">right</span>(angle)
+<span class="function">left</span>(angle)
+<span class="function">pencolor</span>(<span class="string">"color"</span>)
+<span class="function">pensize</span>(width)
+<span class="function">penup</span>()    <span class="comment"># Stop drawing</span>
+<span class="function">pendown</span>()  <span class="comment"># Start drawing</span>
+<span class="function">goto</span>(x, y)  <span class="comment"># Jump to position</span></code></pre>
+                    
+                    <div class="examples">
+                        <h4>Inspiration:</h4>
+                        <button class="example-button" onclick="loadExample4('mandala')">Mandala</button>
+                        <button class="example-button" onclick="loadExample4('geometric')">Geometric</button>
+                        <button class="example-button" onclick="loadExample4('abstract')">Abstract</button>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 Project Ideas:</h4>
+                        • Design a logo<br>
+                        • Create a mandala<br>
+                        • Draw a landscape<br>
+                        • Make a game character<br>
+                        • Build an abstract pattern
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas4" width="600" height="600"></canvas>
+                    <textarea class="code-editor" id="code4" rows="15"># Your masterpiece here!
+pencolor("blue")
+pensize(2)
+
+for i in range(8):
+    forward(100)
+    right(45)</textarea>
+                    <div class="button-group">
+                        <button class="run-button" onclick="runCode4()">▶️ Run Code</button>
+                        <button class="clear-button" onclick="clearCanvas4()">🗑️ Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Turtle Graphics Engine
+        class Turtle {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.angle = -90;
+                this.penDown = true;
+                this.color = 'black';
+                this.width = 2;
+                this.ctx.strokeStyle = this.color;
+                this.ctx.lineWidth = this.width;
+            }
+            
+            forward(distance) {
+                const radians = this.angle * Math.PI / 180;
+                const newX = this.x + distance * Math.cos(radians);
+                const newY = this.y + distance * Math.sin(radians);
+                
+                if (this.penDown) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.x, this.y);
+                    this.ctx.lineTo(newX, newY);
+                    this.ctx.stroke();
+                }
+                
+                this.x = newX;
+                this.y = newY;
+            }
+            
+            backward(distance) {
+                this.forward(-distance);
+            }
+            
+            right(angle) {
+                this.angle += angle;
+            }
+            
+            left(angle) {
+                this.angle -= angle;
+            }
+            
+            pencolor(color) {
+                this.color = color;
+                this.ctx.strokeStyle = color;
+            }
+            
+            pensize(width) {
+                this.width = width;
+                this.ctx.lineWidth = width;
+            }
+            
+            penup() {
+                this.penDown = false;
+            }
+            
+            pendown() {
+                this.penDown = true;
+            }
+            
+            goto(x, y) {
+                this.x = this.canvas.width / 2 + x;
+                this.y = this.canvas.height / 2 + y;
+            }
+        }
+        
+        let turtle1, turtle2, turtle3, turtle4;
+        
+        function showLesson(num) {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('lesson' + i).classList.remove('active');
+            }
+            document.getElementById('lesson' + num).classList.add('active');
+            
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabs[num - 1].classList.add('active');
+        }
+        
+        function clearCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        function runTurtleCode(canvasId, code) {
+            const canvas = document.getElementById(canvasId);
+            const turtle = new Turtle(canvas);
+            
+            const forward = (d) => turtle.forward(d);
+            const backward = (d) => turtle.backward(d);
+            const right = (a) => turtle.right(a);
+            const left = (a) => turtle.left(a);
+            const pencolor = (c) => turtle.pencolor(c);
+            const pensize = (w) => turtle.pensize(w);
+            const penup = () => turtle.penup();
+            const pendown = () => turtle.pendown();
+            const goto = (x, y) => turtle.goto(x, y);
+            
+            try {
+                // Convert Python-style for loops to JavaScript
+                code = code.replace(/for\s+(\w+)\s+in\s+range\s*\((\d+)\)\s*:/g, 'for(let $1=0; $1<$2; $1++){');
+                code = code.replace(/def\s+(\w+)\s*\((.*?)\)\s*:/g, 'function $1($2){');
+                
+                // Remove Python comments and replace with JS
+                code = code.replace(/#([^\n]*)/g, '//$1');
+                
+                eval(code);
+            } catch (error) {
+                alert('Error in code: ' + error.message);
+            }
+        }
+        
+        function runCode1() {
+            clearCanvas('canvas1');
+            runTurtleCode('canvas1', document.getElementById('code1').value);
+        }
+        
+        function clearCanvas1() {
+            clearCanvas('canvas1');
+        }
+        
+        function loadExample1(type) {
+            const examples = {
+                square: `forward(100)
+right(90)
+forward(100)
+right(90)
+forward(100)
+right(90)
+forward(100)`,
+                triangle: `forward(150)
+right(120)
+forward(150)
+right(120)
+forward(150)`,
+                star: `pencolor("gold")
+pensize(3)
+for i in range(5):
+    forward(150)
+    right(144)`
+            };
+            document.getElementById('code1').value = examples[type];
+            runCode1();
+        }
+        
+        function runCode2() {
+            clearCanvas('canvas2');
+            runTurtleCode('canvas2', document.getElementById('code2').value);
+        }
+        
+        function clearCanvas2() {
+            clearCanvas('canvas2');
+        }
+        
+        function loadExample2(type) {
+            const examples = {
+                hexagon: `pencolor("blue")
+pensize(3)
+for i in range(6):
+    forward(100)
+    right(60)`,
+                spiral: `pencolor("purple")
+for i in range(100):
+    forward(i * 2)
+    right(45)`,
+                flower: `pencolor("pink")
+for i in range(36):
+    for j in range(4):
+        forward(50)
+        right(90)
+    right(10)`
+            };
+            document.getElementById('code2').value = examples[type];
+            runCode2();
+        }
+        
+        function runCode3() {
+            clearCanvas('canvas3');
+            runTurtleCode('canvas3', document.getElementById('code3').value);
+        }
+        
+        function clearCanvas3() {
+            clearCanvas('canvas3');
+        }
+        
+        function loadExample3(type) {
+            const examples = {
+                squares: `def draw_square(size):
+    for i in range(4):
+        forward(size)
+        right(90)
+
+for i in range(10):
+    draw_square(20 + i * 10)
+    right(36)`,
+                stars: `def draw_star(size):
+    for i in range(5):
+        forward(size)
+        right(144)
+
+pencolor("gold")
+for i in range(12):
+    draw_star(100)
+    right(30)`,
+                rainbow: `def draw_circle(size, color):
+    pencolor(color)
+    for i in range(36):
+        forward(size)
+        right(10)
+
+colors = ["red", "orange", "yellow", "green", "blue", "purple"]
+for i in range(6):
+    draw_circle(5, colors[i])`
+            };
+            document.getElementById('code3').value = examples[type];
+            runCode3();
+        }
+        
+        function runCode4() {
+            clearCanvas('canvas4');
+            runTurtleCode('canvas4', document.getElementById('code4').value);
+        }
+        
+        function clearCanvas4() {
+            clearCanvas('canvas4');
+        }
+        
+        function loadExample4(type) {
+            const examples = {
+                mandala: `def draw_petal():
+    for i in range(2):
+        for j in range(50):
+            forward(2)
+            right(2)
+        right(90)
+
+pencolor("purple")
+for i in range(36):
+    draw_petal()
+    right(10)`,
+                geometric: `pensize(2)
+colors = ["red", "blue", "green", "orange", "purple"]
+for i in range(50):
+    pencolor(colors[i % 5])
+    forward(i * 5)
+    right(91)`,
+                abstract: `for i in range(200):
+    if i % 2 == 0:
+        pencolor("cyan")
+    else:
+        pencolor("magenta")
+    forward(i)
+    right(91)`
+            };
+            document.getElementById('code4').value = examples[type];
+            runCode4();
+        }
+    </script>
+</body>
+</html>

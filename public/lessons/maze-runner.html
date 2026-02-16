@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Runner - Build Your Own Maze Game!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 3em;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        
+        .lesson-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 15px 25px;
+            border: none;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            opacity: 0.6;
+        }
+        
+        .tab-button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+        
+        .tab-button.active {
+            opacity: 1;
+            box-shadow: 0 8px 20px rgba(250, 112, 154, 0.6);
+        }
+        
+        .lesson-content {
+            display: none;
+        }
+        
+        .lesson-content.active {
+            display: block;
+        }
+        
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .lesson-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .code-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .explanation {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #f59e0b;
+        }
+        
+        .code-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .number { color: #f78c6c; }
+        .comment { color: #697098; font-style: italic; }
+        .function { color: #82aaff; }
+        
+        canvas {
+            border: 4px solid #fa709a;
+            border-radius: 15px;
+            background: #2d3748;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .game-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .game-button {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .game-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+        
+        .challenge {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 5px solid #3b82f6;
+        }
+        
+        .instructions {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #10b981;
+        }
+        
+        .key-hint {
+            display: inline-block;
+            background: #374151;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Maze Runner Game! 🏃</h1>
+        <p class="subtitle">Learn game design by building maze games with collision detection!</p>
+        
+        <div class="lesson-tabs">
+            <button class="tab-button active" onclick="showLesson(1)">Level 1: Simple Maze</button>
+            <button class="tab-button" onclick="showLesson(2)">Level 2: Add Collectibles</button>
+            <button class="tab-button" onclick="showLesson(3)">Level 3: Moving Enemies</button>
+            <button class="tab-button" onclick="showLesson(4)">Level 4: Design Your Maze!</button>
+        </div>
+        
+        <!-- LEVEL 1: Simple Maze -->
+        <div id="lesson1" class="lesson-content active">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🧱 Level 1: Navigate a Maze</h3>
+                    <div class="explanation">
+                        <strong>Mazes use a grid system!</strong><br>
+                        We create a 2D array (a grid) where each cell is either a wall or empty space. Then we check if the player can move to each space.
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Create maze with 2D array</span>
+<span class="keyword">let</span> maze = [
+    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],  <span class="comment">// 1 = wall</span>
+    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],  <span class="comment">// 0 = empty</span>
+    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>],
+    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],
+    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]
+];
+
+<span class="comment">// Check if player can move</span>
+<span class="keyword">function</span> <span class="function">canMove</span>(x, y) {
+    <span class="keyword">return</span> maze[y][x] === <span class="number">0</span>;
+}</code>
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>🎮 Controls:</strong> Use <span class="key-hint">↑</span> <span class="key-hint">↓</span> <span class="key-hint">←</span> <span class="key-hint">→</span> arrow keys to navigate the maze!
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        • 2D arrays (grids)<br>
+                        • Collision detection<br>
+                        • Coordinate systems (x, y)<br>
+                        • Reading from arrays
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <canvas id="canvas1" width="600" height="600"></canvas>
+                    <div class="game-info">
+                        <div class="info-box">⏱️ Time: <span id="time1">0</span>s</div>
+                    </div>
+                    <div class="button-group">
+                        <button class="game-button" onclick="startLevel1()">▶️ Start</button>
+                        <button class="game-button" onclick="resetLevel1()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">🔄 Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEVEL 2: Collectibles -->
+        <div id="lesson2" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>⭐ Level 2: Collect Stars!</h3>
+                    <div class="explanation">
+                        <strong>Add collectible items!</strong><br>
+                        We add special items to the maze grid and check when the player reaches them. This teaches you how to track game state and update the maze.
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Add collectibles to maze</span>
+<span class="keyword">let</span> maze = [
+    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],
+    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>],  <span class="comment">// 2 = star</span>
+    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>],
+    [<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],
+    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]
+];
+
+<span class="comment">// Check for collectibles</span>
+<span class="keyword">if</span> (maze[playerY][playerX] === <span class="number">2</span>) {
+    score++;
+    maze[playerY][playerX] = <span class="number">0</span>; <span class="comment">// Remove star</span>
+}</code>
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>🎯 Goal:</strong> Collect all the stars to win! Navigate carefully!
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        • Modifying array values<br>
+                        • Tracking score/progress<br>
+                        • Win conditions<br>
+                        • Game objectives
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <canvas id="canvas2" width="600" height="600"></canvas>
+                    <div class="game-info">
+                        <div class="info-box">⭐ Stars: <span id="stars2">0</span>/10</div>
+                        <div class="info-box">⏱️ Time: <span id="time2">0</span>s</div>
+                    </div>
+                    <div class="button-group">
+                        <button class="game-button" onclick="startLevel2()">▶️ Start</button>
+                        <button class="game-button" onclick="resetLevel2()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">🔄 Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEVEL 3: Moving Enemies -->
+        <div id="lesson3" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>👾 Level 3: Avoid Enemies!</h3>
+                    <div class="explanation">
+                        <strong>Add moving obstacles!</strong><br>
+                        We create enemy objects that move in patterns. This teaches AI movement patterns and collision checking between multiple objects.
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Create enemies</span>
+<span class="keyword">let</span> enemies = [
+    { x: <span class="number">3</span>, y: <span class="number">3</span>, dx: <span class="number">1</span>, dy: <span class="number">0</span> },
+    { x: <span class="number">7</span>, y: <span class="number">5</span>, dx: <span class="number">0</span>, dy: <span class="number">1</span> }
+];
+
+<span class="comment">// Move enemies</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> enemy <span class="keyword">of</span> enemies) {
+    enemy.x += enemy.dx;
+    enemy.y += enemy.dy;
+    
+    <span class="comment">// Bounce off walls</span>
+    <span class="keyword">if</span> (maze[enemy.y][enemy.x] === <span class="number">1</span>) {
+        enemy.dx = -enemy.dx;
+        enemy.dy = -enemy.dy;
+    }
+}</code>
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>⚠️ Watch Out:</strong> Red enemies patrol the maze! Don't touch them or you lose!
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        • Managing multiple objects<br>
+                        • AI movement patterns<br>
+                        • Collision between objects<br>
+                        • Game difficulty progression
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <canvas id="canvas3" width="600" height="600"></canvas>
+                    <div class="game-info">
+                        <div class="info-box">⭐ Stars: <span id="stars3">0</span>/8</div>
+                        <div class="info-box">💚 Lives: <span id="lives3">3</span></div>
+                        <div class="info-box">⏱️ Time: <span id="time3">0</span>s</div>
+                    </div>
+                    <div class="button-group">
+                        <button class="game-button" onclick="startLevel3()">▶️ Start</button>
+                        <button class="game-button" onclick="resetLevel3()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">🔄 Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEVEL 4: Design Your Own -->
+        <div id="lesson4" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🎨 Level 4: Design Your Maze!</h3>
+                    <div class="explanation">
+                        <strong>Now YOU create the maze!</strong><br>
+                        Click on the grid to place walls, then test your maze design!
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>🖱️ Click Mode:</strong>
+                        <button id="wallBtn" class="game-button" onclick="setTool('wall')" style="padding: 10px 20px; font-size: 0.9em;">🧱 Wall</button>
+                        <button id="pathBtn" class="game-button" onclick="setTool('path')" style="padding: 10px 20px; font-size: 0.9em;">⬜ Path</button>
+                        <button id="starBtn" class="game-button" onclick="setTool('star')" style="padding: 10px 20px; font-size: 0.9em;">⭐ Star</button>
+                        <button id="enemyBtn" class="game-button" onclick="setTool('enemy')" style="padding: 10px 20px; font-size: 0.9em;">👾 Enemy</button>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 Design Tips:</h4>
+                        • Create interesting paths<br>
+                        • Place stars strategically<br>
+                        • Add enemies for challenge<br>
+                        • Test and refine your maze!<br>
+                        • Make it fun but fair!
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <canvas id="canvas4" width="600" height="600"></canvas>
+                    <div class="game-info">
+                        <div class="info-box">⭐ Stars: <span id="stars4">0</span>/<span id="totalStars4">0</span></div>
+                        <div class="info-box">⏱️ Time: <span id="time4">0</span>s</div>
+                    </div>
+                    <div class="button-group">
+                        <button class="game-button" onclick="playCustomMaze()">▶️ Play My Maze!</button>
+                        <button class="game-button" onclick="clearMaze()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">🗑️ Clear</button>
+                        <button class="game-button" onclick="stopCustom()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">⏹️ Edit Mode</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let keys = {};
+        let currentTool = 'wall';
+        
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        function showLesson(num) {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('lesson' + i).classList.remove('active');
+            }
+            document.getElementById('lesson' + num).classList.add('active');
+            
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabs[num - 1].classList.add('active');
+        }
+        
+        // ========== LEVEL 1: Simple Maze ==========
+        const maze1 = [
+            [1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,1,0,0,0,0,1],
+            [1,0,1,0,1,0,1,1,0,1],
+            [1,0,1,0,0,0,0,1,0,1],
+            [1,0,1,1,1,1,0,1,0,1],
+            [1,0,0,0,0,0,0,1,0,1],
+            [1,1,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,1,1,3,1],
+            [1,1,1,1,1,1,1,1,1,1]
+        ];
+        
+        let player1 = { x: 1, y: 1 };
+        let time1 = 0;
+        let anim1, timer1;
+        
+        function startLevel1() {
+            player1 = { x: 1, y: 1 };
+            time1 = 0;
+            
+            timer1 = setInterval(() => {
+                time1++;
+                document.getElementById('time1').textContent = time1;
+            }, 1000);
+            
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            const cellSize = canvas.width / 10;
+            
+            function animate() {
+                // Move player
+                if (keys['ArrowUp'] && maze1[player1.y - 1][player1.x] !== 1) player1.y--;
+                if (keys['ArrowDown'] && maze1[player1.y + 1][player1.x] !== 1) player1.y++;
+                if (keys['ArrowLeft'] && maze1[player1.y][player1.x - 1] !== 1) player1.x--;
+                if (keys['ArrowRight'] && maze1[player1.y][player1.x + 1] !== 1) player1.x++;
+                
+                // Check win
+                if (maze1[player1.y][player1.x] === 3) {
+                    clearInterval(timer1);
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 48px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🏆 You Win!', canvas.width/2, canvas.height/2);
+                    ctx.font = '24px Arial';
+                    ctx.fillText('Time: ' + time1 + ' seconds', canvas.width/2, canvas.height/2 + 50);
+                    return;
+                }
+                
+                // Draw maze
+                ctx.fillStyle = '#2d3748';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let y = 0; y < maze1.length; y++) {
+                    for (let x = 0; x < maze1[y].length; x++) {
+                        if (maze1[y][x] === 1) {
+                            ctx.fillStyle = '#4a5568';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                        } else if (maze1[y][x] === 3) {
+                            ctx.fillStyle = '#fbbf24';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 30px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('🏁', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                        }
+                    }
+                }
+                
+                // Draw player
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(player1.x * cellSize, player1.y * cellSize, cellSize - 2, cellSize - 2);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 30px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('😊', (player1.x + 0.5) * cellSize, (player1.y + 0.7) * cellSize);
+                
+                anim1 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function resetLevel1() {
+            cancelAnimationFrame(anim1);
+            clearInterval(timer1);
+            startLevel1();
+        }
+        
+        // ========== LEVEL 2: Collectibles ==========
+        let maze2 = [
+            [1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,2,1,2,0,0,0,1],
+            [1,0,1,0,1,0,1,1,2,1],
+            [1,2,1,0,0,0,0,1,0,1],
+            [1,0,1,1,1,1,0,1,0,1],
+            [1,0,2,0,0,2,0,1,0,1],
+            [1,1,1,0,1,1,1,1,0,1],
+            [1,0,0,2,0,0,0,2,0,1],
+            [1,0,1,1,1,1,1,1,3,1],
+            [1,1,1,1,1,1,1,1,1,1]
+        ];
+        
+        let player2 = { x: 1, y: 1 };
+        let stars2 = 0;
+        let totalStars2 = 10;
+        let time2 = 0;
+        let anim2, timer2;
+        
+        function startLevel2() {
+            maze2 = [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,2,1,2,0,0,0,1],
+                [1,0,1,0,1,0,1,1,2,1],
+                [1,2,1,0,0,0,0,1,0,1],
+                [1,0,1,1,1,1,0,1,0,1],
+                [1,0,2,0,0,2,0,1,0,1],
+                [1,1,1,0,1,1,1,1,0,1],
+                [1,0,0,2,0,0,0,2,0,1],
+                [1,0,1,1,1,1,1,1,3,1],
+                [1,1,1,1,1,1,1,1,1,1]
+            ];
+            
+            player2 = { x: 1, y: 1 };
+            stars2 = 0;
+            time2 = 0;
+            document.getElementById('stars2').textContent = stars2;
+            
+            timer2 = setInterval(() => {
+                time2++;
+                document.getElementById('time2').textContent = time2;
+            }, 1000);
+            
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            const cellSize = canvas.width / 10;
+            
+            function animate() {
+                let moved = false;
+                
+                if (keys['ArrowUp'] && maze2[player2.y - 1]?.[player2.x] !== 1) {
+                    player2.y--;
+                    moved = true;
+                }
+                if (keys['ArrowDown'] && maze2[player2.y + 1]?.[player2.x] !== 1) {
+                    player2.y++;
+                    moved = true;
+                }
+                if (keys['ArrowLeft'] && maze2[player2.y][player2.x - 1] !== 1) {
+                    player2.x--;
+                    moved = true;
+                }
+                if (keys['ArrowRight'] && maze2[player2.y][player2.x + 1] !== 1) {
+                    player2.x++;
+                    moved = true;
+                }
+                
+                if (moved) {
+                    if (maze2[player2.y][player2.x] === 2) {
+                        stars2++;
+                        maze2[player2.y][player2.x] = 0;
+                        document.getElementById('stars2').textContent = stars2;
+                    }
+                    
+                    if (maze2[player2.y][player2.x] === 3 && stars2 === totalStars2) {
+                        clearInterval(timer2);
+                        ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 48px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🏆 You Win!', canvas.width/2, canvas.height/2);
+                        ctx.font = '24px Arial';
+                        ctx.fillText('All stars collected!', canvas.width/2, canvas.height/2 + 50);
+                        return;
+                    }
+                }
+                
+                // Draw
+                ctx.fillStyle = '#2d3748';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let y = 0; y < maze2.length; y++) {
+                    for (let x = 0; x < maze2[y].length; x++) {
+                        if (maze2[y][x] === 1) {
+                            ctx.fillStyle = '#4a5568';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                        } else if (maze2[y][x] === 2) {
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 30px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('⭐', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                        } else if (maze2[y][x] === 3) {
+                            ctx.fillStyle = '#fbbf24';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 30px Arial';
+                            ctx.fillText('🏁', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                        }
+                    }
+                }
+                
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(player2.x * cellSize, player2.y * cellSize, cellSize - 2, cellSize - 2);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 30px Arial';
+                ctx.fillText('😊', (player2.x + 0.5) * cellSize, (player2.y + 0.7) * cellSize);
+                
+                anim2 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function resetLevel2() {
+            cancelAnimationFrame(anim2);
+            clearInterval(timer2);
+            startLevel2();
+        }
+        
+        // ========== LEVEL 3: Enemies ==========
+        let maze3 = [
+            [1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,2,1,2,0,0,0,1],
+            [1,0,1,0,0,0,1,1,2,1],
+            [1,2,0,0,1,0,0,0,0,1],
+            [1,0,1,0,0,0,1,1,0,1],
+            [1,0,2,0,1,2,0,0,0,1],
+            [1,1,1,0,0,0,1,1,0,1],
+            [1,0,0,2,1,0,0,0,0,1],
+            [1,0,1,1,1,1,1,1,3,1],
+            [1,1,1,1,1,1,1,1,1,1]
+        ];
+        
+        let player3 = { x: 1, y: 1 };
+        let enemies3 = [
+            { x: 5, y: 3, dx: 1, dy: 0 },
+            { x: 3, y: 6, dx: 0, dy: 1 }
+        ];
+        let stars3 = 0;
+        let totalStars3 = 8;
+        let lives3 = 3;
+        let time3 = 0;
+        let anim3, timer3;
+        let invincible3 = false;
+        
+        function startLevel3() {
+            maze3 = [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,2,1,2,0,0,0,1],
+                [1,0,1,0,0,0,1,1,2,1],
+                [1,2,0,0,1,0,0,0,0,1],
+                [1,0,1,0,0,0,1,1,0,1],
+                [1,0,2,0,1,2,0,0,0,1],
+                [1,1,1,0,0,0,1,1,0,1],
+                [1,0,0,2,1,0,0,0,0,1],
+                [1,0,1,1,1,1,1,1,3,1],
+                [1,1,1,1,1,1,1,1,1,1]
+            ];
+            
+            player3 = { x: 1, y: 1 };
+            enemies3 = [
+                { x: 5, y: 3, dx: 1, dy: 0 },
+                { x: 3, y: 6, dx: 0, dy: 1 }
+            ];
+            stars3 = 0;
+            lives3 = 3;
+            time3 = 0;
+            invincible3 = false;
+            
+            document.getElementById('stars3').textContent = stars3;
+            document.getElementById('lives3').textContent = lives3;
+            
+            timer3 = setInterval(() => {
+                time3++;
+                document.getElementById('time3').textContent = time3;
+            }, 1000);
+            
+            const canvas = document.getElementById('canvas3');
+            const ctx = canvas.getContext('2d');
+            const cellSize = canvas.width / 10;
+            let frameCount = 0;
+            
+            function animate() {
+                frameCount++;
+                
+                // Move player
+                let moved = false;
+                if (keys['ArrowUp'] && maze3[player3.y - 1]?.[player3.x] !== 1) {
+                    player3.y--;
+                    moved = true;
+                }
+                if (keys['ArrowDown'] && maze3[player3.y + 1]?.[player3.x] !== 1) {
+                    player3.y++;
+                    moved = true;
+                }
+                if (keys['ArrowLeft'] && maze3[player3.y][player3.x - 1] !== 1) {
+                    player3.x--;
+                    moved = true;
+                }
+                if (keys['ArrowRight'] && maze3[player3.y][player3.x + 1] !== 1) {
+                    player3.x++;
+                    moved = true;
+                }
+                
+                if (moved && maze3[player3.y][player3.x] === 2) {
+                    stars3++;
+                    maze3[player3.y][player3.x] = 0;
+                    document.getElementById('stars3').textContent = stars3;
+                }
+                
+                // Move enemies
+                if (frameCount % 20 === 0) {
+                    enemies3.forEach(enemy => {
+                        let newX = enemy.x + enemy.dx;
+                        let newY = enemy.y + enemy.dy;
+                        
+                        if (maze3[newY]?.[newX] === 1 || maze3[newY]?.[newX] === undefined) {
+                            enemy.dx = -enemy.dx;
+                            enemy.dy = -enemy.dy;
+                        } else {
+                            enemy.x = newX;
+                            enemy.y = newY;
+                        }
+                    });
+                }
+                
+                // Check enemy collision
+                if (!invincible3) {
+                    enemies3.forEach(enemy => {
+                        if (enemy.x === player3.x && enemy.y === player3.y) {
+                            lives3--;
+                            document.getElementById('lives3').textContent = lives3;
+                            player3.x = 1;
+                            player3.y = 1;
+                            invincible3 = true;
+                            setTimeout(() => invincible3 = false, 2000);
+                            
+                            if (lives3 <= 0) {
+                                clearInterval(timer3);
+                                ctx.fillStyle = 'rgba(239, 68, 68, 0.9)';
+                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                ctx.fillStyle = 'white';
+                                ctx.font = 'bold 48px Arial';
+                                ctx.textAlign = 'center';
+                                ctx.fillText('💀 Game Over!', canvas.width/2, canvas.height/2);
+                                return;
+                            }
+                        }
+                    });
+                }
+                
+                // Check win
+                if (maze3[player3.y][player3.x] === 3 && stars3 === totalStars3) {
+                    clearInterval(timer3);
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 48px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🏆 You Win!', canvas.width/2, canvas.height/2);
+                    return;
+                }
+                
+                // Draw
+                ctx.fillStyle = '#2d3748';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let y = 0; y < maze3.length; y++) {
+                    for (let x = 0; x < maze3[y].length; x++) {
+                        if (maze3[y][x] === 1) {
+                            ctx.fillStyle = '#4a5568';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                        } else if (maze3[y][x] === 2) {
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 30px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('⭐', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                        } else if (maze3[y][x] === 3) {
+                            ctx.fillStyle = '#fbbf24';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 30px Arial';
+                            ctx.fillText('🏁', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                        }
+                    }
+                }
+                
+                // Draw enemies
+                enemies3.forEach(enemy => {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(enemy.x * cellSize, enemy.y * cellSize, cellSize - 2, cellSize - 2);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 30px Arial';
+                    ctx.fillText('👾', (enemy.x + 0.5) * cellSize, (enemy.y + 0.7) * cellSize);
+                });
+                
+                // Draw player
+                ctx.fillStyle = invincible3 ? '#fbbf24' : '#3b82f6';
+                ctx.fillRect(player3.x * cellSize, player3.y * cellSize, cellSize - 2, cellSize - 2);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 30px Arial';
+                ctx.fillText('😊', (player3.x + 0.5) * cellSize, (player3.y + 0.7) * cellSize);
+                
+                anim3 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function resetLevel3() {
+            cancelAnimationFrame(anim3);
+            clearInterval(timer3);
+            startLevel3();
+        }
+        
+        // ========== LEVEL 4: Design Your Own ==========
+        let maze4 = Array(10).fill().map(() => Array(10).fill(0));
+        // Add borders
+        for (let i = 0; i < 10; i++) {
+            maze4[0][i] = 1;
+            maze4[9][i] = 1;
+            maze4[i][0] = 1;
+            maze4[i][9] = 1;
+        }
+        
+        let customEnemies = [];
+        let isPlaying4 = false;
+        let player4 = { x: 1, y: 1 };
+        let stars4 = 0;
+        let totalStars4 = 0;
+        let time4 = 0;
+        let anim4, timer4;
+        
+        function setTool(tool) {
+            currentTool = tool;
+            ['wallBtn', 'pathBtn', 'starBtn', 'enemyBtn'].forEach(id => {
+                document.getElementById(id).style.opacity = '0.6';
+            });
+            document.getElementById(tool + 'Btn').style.opacity = '1';
+        }
+        
+        function drawMaze4() {
+            const canvas = document.getElementById('canvas4');
+            const ctx = canvas.getContext('2d');
+            const cellSize = canvas.width / 10;
+            
+            ctx.fillStyle = '#2d3748';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            totalStars4 = 0;
+            
+            for (let y = 0; y < 10; y++) {
+                for (let x = 0; x < 10; x++) {
+                    if (maze4[y][x] === 1) {
+                        ctx.fillStyle = '#4a5568';
+                        ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                    } else if (maze4[y][x] === 2) {
+                        totalStars4++;
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 30px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('⭐', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                    } else if (maze4[y][x] === 3) {
+                        ctx.fillStyle = '#fbbf24';
+                        ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 30px Arial';
+                        ctx.fillText('🏁', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                    }
+                }
+            }
+            
+            customEnemies.forEach(enemy => {
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(enemy.x * cellSize, enemy.y * cellSize, cellSize - 2, cellSize - 2);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 30px Arial';
+                ctx.fillText('👾', (enemy.x + 0.5) * cellSize, (enemy.y + 0.7) * cellSize);
+            });
+            
+            document.getElementById('totalStars4').textContent = totalStars4;
+        }
+        
+        const canvas4 = document.getElementById('canvas4');
+        canvas4.addEventListener('click', (e) => {
+            if (isPlaying4) return;
+            
+            const rect = canvas4.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / (canvas4.width / 10));
+            const y = Math.floor((e.clientY - rect.top) / (canvas4.height / 10));
+            
+            if (x === 0 || x === 9 || y === 0 || y === 9) return;
+            
+            if (currentTool === 'wall') {
+                maze4[y][x] = maze4[y][x] === 1 ? 0 : 1;
+            } else if (currentTool === 'path') {
+                maze4[y][x] = 0;
+            } else if (currentTool === 'star') {
+                maze4[y][x] = maze4[y][x] === 2 ? 0 : 2;
+            } else if (currentTool === 'enemy') {
+                const existing = customEnemies.findIndex(e => e.x === x && e.y === y);
+                if (existing >= 0) {
+                    customEnemies.splice(existing, 1);
+                } else {
+                    customEnemies.push({ x, y, dx: 1, dy: 0 });
+                }
+            }
+            
+            drawMaze4();
+        });
+        
+        function clearMaze() {
+            maze4 = Array(10).fill().map(() => Array(10).fill(0));
+            for (let i = 0; i < 10; i++) {
+                maze4[0][i] = 1;
+                maze4[9][i] = 1;
+                maze4[i][0] = 1;
+                maze4[i][9] = 1;
+            }
+            customEnemies = [];
+            drawMaze4();
+        }
+        
+        function playCustomMaze() {
+            isPlaying4 = true;
+            player4 = { x: 1, y: 1 };
+            stars4 = 0;
+            time4 = 0;
+            document.getElementById('stars4').textContent = stars4;
+            
+            maze4[8][8] = 3; // Add finish
+            
+            timer4 = setInterval(() => {
+                time4++;
+                document.getElementById('time4').textContent = time4;
+            }, 1000);
+            
+            const canvas = document.getElementById('canvas4');
+            const ctx = canvas.getContext('2d');
+            const cellSize = canvas.width / 10;
+            let frameCount = 0;
+            
+            function animate() {
+                frameCount++;
+                
+                // Move player
+                let moved = false;
+                if (keys['ArrowUp'] && maze4[player4.y - 1]?.[player4.x] !== 1) {
+                    player4.y--;
+                    moved = true;
+                }
+                if (keys['ArrowDown'] && maze4[player4.y + 1]?.[player4.x] !== 1) {
+                    player4.y++;
+                    moved = true;
+                }
+                if (keys['ArrowLeft'] && maze4[player4.y][player4.x - 1] !== 1) {
+                    player4.x--;
+                    moved = true;
+                }
+                if (keys['ArrowRight'] && maze4[player4.y][player4.x + 1] !== 1) {
+                    player4.x++;
+                    moved = true;
+                }
+                
+                if (moved && maze4[player4.y][player4.x] === 2) {
+                    stars4++;
+                    maze4[player4.y][player4.x] = 0;
+                    document.getElementById('stars4').textContent = stars4;
+                }
+                
+                // Move enemies
+                if (frameCount % 20 === 0) {
+                    customEnemies.forEach(enemy => {
+                        let newX = enemy.x + enemy.dx;
+                        let newY = enemy.y + enemy.dy;
+                        
+                        if (maze4[newY]?.[newX] === 1 || maze4[newY]?.[newX] === undefined) {
+                            enemy.dx = -enemy.dx;
+                            enemy.dy = -enemy.dy;
+                        } else {
+                            enemy.x = newX;
+                            enemy.y = newY;
+                        }
+                    });
+                }
+                
+                // Check win
+                if (maze4[player4.y][player4.x] === 3) {
+                    clearInterval(timer4);
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 48px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🏆 You Win!', canvas.width/2, canvas.height/2);
+                    isPlaying4 = false;
+                    return;
+                }
+                
+                // Draw
+                ctx.fillStyle = '#2d3748';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let y = 0; y < 10; y++) {
+                    for (let x = 0; x < 10; x++) {
+                        if (maze4[y][x] === 1) {
+                            ctx.fillStyle = '#4a5568';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                        } else if (maze4[y][x] === 2) {
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 30px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('⭐', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                        } else if (maze4[y][x] === 3) {
+                            ctx.fillStyle = '#fbbf24';
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 2, cellSize - 2);
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 30px Arial';
+                            ctx.fillText('🏁', (x + 0.5) * cellSize, (y + 0.7) * cellSize);
+                        }
+                    }
+                }
+                
+                customEnemies.forEach(enemy => {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(enemy.x * cellSize, enemy.y * cellSize, cellSize - 2, cellSize - 2);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 30px Arial';
+                    ctx.fillText('👾', (enemy.x + 0.5) * cellSize, (enemy.y + 0.7) * cellSize);
+                });
+                
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(player4.x * cellSize, player4.y * cellSize, cellSize - 2, cellSize - 2);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 30px Arial';
+                ctx.fillText('😊', (player4.x + 0.5) * cellSize, (player4.y + 0.7) * cellSize);
+                
+                anim4 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopCustom() {
+            isPlaying4 = false;
+            cancelAnimationFrame(anim4);
+            clearInterval(timer4);
+            drawMaze4();
+        }
+        
+        drawMaze4();
+    </script>
+</body>
+</html>
