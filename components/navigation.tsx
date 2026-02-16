@@ -10,11 +10,12 @@ const navItems = [
   { label: "Home", href: "/" },
   { label: "Classes", href: "/classes" },
   { label: "Events", href: "/events" },
-   { label: "Programs", href: "/programs" }, 
+  { label: "Programs", href: "/programs" }, 
+  //{ label: "Interactive Lessons", href: "/lessons" }, // NEW - Added here!
   { label: "About Us", href: "/about" },
   { label: "Our Approach", href: "/approach" },
   { label: "Gallery", href: "/gallery" },
-   { label: "Join Our Team", href: "/careers" },  // HIDDEN - Uncomment when ready to hire
+  //{ label: "Join Our Team", href: "/careers" },  // HIDDEN - Uncomment when ready to hire
   { label: "Sponsor", href: "/sponsor" },
   { label: "Contact", href: "/contact" },
 ]

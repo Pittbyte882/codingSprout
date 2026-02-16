@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Smileys - Animation Lesson!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #f5576c;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        
+        .lesson-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 12px 20px;
+            border: none;
+            background: #ffe0e0;
+            color: #f5576c;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab-button:hover {
+            background: #f5576c;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .tab-button.active {
+            background: #f5576c;
+            color: white;
+        }
+        
+        .lesson-content {
+            display: none;
+        }
+        
+        .lesson-content.active {
+            display: block;
+        }
+        
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .lesson-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .code-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .code-section h3 {
+            color: #f5576c;
+            margin-bottom: 15px;
+        }
+        
+        .explanation {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .code-box {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        
+        .code-box code {
+            display: block;
+            white-space: pre;
+        }
+        
+        .keyword {
+            color: #f687b3;
+        }
+        
+        .string {
+            color: #68d391;
+        }
+        
+        .number {
+            color: #90cdf4;
+        }
+        
+        .comment {
+            color: #a0aec0;
+        }
+        
+        canvas {
+            border: 3px solid #f5576c;
+            border-radius: 10px;
+            background: #e8f4f8;
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            display: block;
+        }
+        
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .run-button {
+            padding: 15px 30px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .run-button:hover {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+        
+        .stop-button {
+            padding: 15px 30px;
+            background: #fc8181;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .stop-button:hover {
+            background: #f56565;
+            transform: scale(1.05);
+        }
+        
+        .challenge {
+            background: #e6fffa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 5px solid #38b2ac;
+        }
+        
+        .challenge h4 {
+            color: #38b2ac;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .control-row label {
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        input[type="number"], input[type="range"], select {
+            padding: 8px;
+            border: 2px solid #f5576c;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        input[type="range"] {
+            width: 150px;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.selected {
+            border-color: #2d3748;
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>😊 Bouncing Smileys! 🎈</h1>
+        <p class="subtitle">Make smileys bounce and move across the screen!</p>
+        
+        <div class="lesson-tabs">
+            <button class="tab-button active" onclick="showLesson(1)">Lesson 1: One Smiley</button>
+            <button class="tab-button" onclick="showLesson(2)">Lesson 2: Change Speed</button>
+            <button class="tab-button" onclick="showLesson(3)">Lesson 3: Many Smileys</button>
+            <button class="tab-button" onclick="showLesson(4)">Lesson 4: Crazy Patterns!</button>
+        </div>
+        
+        <!-- LESSON 1: Basic Bouncing -->
+        <div id="lesson1" class="lesson-content active">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🎾 Making Things Move</h3>
+                    <div class="explanation">
+                        <strong>To make something move, we need:</strong><br>
+                        1. A position (where it is)<br>
+                        2. A speed (how fast it moves)<br>
+                        3. To update the position over and over!
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Position of our smiley</span>
+<span class="keyword">let</span> x = <span class="number">50</span>;
+<span class="keyword">let</span> y = <span class="number">50</span>;
+
+<span class="comment">// Speed (how much to move each time)</span>
+<span class="keyword">let</span> speedX = <span class="number">3</span>;
+<span class="keyword">let</span> speedY = <span class="number">2</span>;
+
+<span class="comment">// Update position</span>
+x = x + speedX;
+y = y + speedY;
+
+<span class="comment">// Bounce off walls!</span>
+<span class="keyword">if</span> (x > canvas.width) {
+    speedX = -speedX; <span class="comment">// Go backwards!</span>
+}</code>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <label>Smiley Size:</label>
+                            <input type="range" id="size1" min="20" max="80" value="40">
+                            <span id="size1-value">40</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Pick a Color:</label>
+                            <div class="color-picker">
+                                <div class="color-option selected" style="background: yellow;" onclick="selectColor1('yellow', this)"></div>
+                                <div class="color-option" style="background: orange;" onclick="selectColor1('orange', this)"></div>
+                                <div class="color-option" style="background: pink;" onclick="selectColor1('pink', this)"></div>
+                                <div class="color-option" style="background: lightblue;" onclick="selectColor1('lightblue', this)"></div>
+                                <div class="color-option" style="background: lightgreen;" onclick="selectColor1('lightgreen', this)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Watch This!</h4>
+                        The smiley bounces off the walls like a ball! Try different sizes and colors.
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas1" width="500" height="400"></canvas>
+                    <div class="button-group">
+                        <button class="run-button" onclick="startLesson1()">▶️ Start!</button>
+                        <button class="stop-button" onclick="stopLesson1()">⏸️ Stop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 2: Speed Control -->
+        <div id="lesson2" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>⚡ Control the Speed</h3>
+                    <div class="explanation">
+                        <strong>Speed is just a number!</strong><br>
+                        Bigger number = faster movement<br>
+                        Smaller number = slower movement<br>
+                        You control it!
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Different speeds create different movements</span>
+<span class="keyword">let</span> speedX = <span class="number">5</span>;  <span class="comment">// Fast horizontal</span>
+<span class="keyword">let</span> speedY = <span class="number">2</span>;  <span class="comment">// Slow vertical</span>
+
+<span class="comment">// Update position every frame</span>
+x = x + speedX;
+y = y + speedY;
+
+<span class="comment">// This creates diagonal bouncing!</span>
+<span class="comment">// Try different speeds to see patterns</span></code>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <label>Horizontal Speed:</label>
+                            <input type="range" id="speedX2" min="1" max="10" value="5">
+                            <span id="speedX2-value">5</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Vertical Speed:</label>
+                            <input type="range" id="speedY2" min="1" max="10" value="3">
+                            <span id="speedY2-value">3</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Size:</label>
+                            <input type="range" id="size2" min="20" max="80" value="40">
+                            <span id="size2-value">40</span>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Try This!</h4>
+                        • Make speedX = speedY for diagonal bouncing<br>
+                        • Make one speed much faster than the other<br>
+                        • What patterns do you see?
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas2" width="500" height="400"></canvas>
+                    <div class="button-group">
+                        <button class="run-button" onclick="startLesson2()">▶️ Start!</button>
+                        <button class="stop-button" onclick="stopLesson2()">⏸️ Stop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 3: Multiple Smileys -->
+        <div id="lesson3" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>👥 Many Smileys Moving!</h3>
+                    <div class="explanation">
+                        <strong>Using loops to make many smileys!</strong><br>
+                        Each smiley has its own position and speed.<br>
+                        They all move at the same time!
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Array to store many smileys</span>
+<span class="keyword">let</span> smileys = [];
+
+<span class="comment">// Create 5 smileys with different speeds</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">5</span>; i++) {
+    smileys.push({
+        x: <span class="number">100</span> + i * <span class="number">50</span>,
+        y: <span class="number">100</span>,
+        speedX: <span class="number">2</span> + i,
+        speedY: <span class="number">3</span> - i
+    });
+}
+
+<span class="comment">// Move each smiley</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> smiley <span class="keyword">of</span> smileys) {
+    smiley.x += smiley.speedX;
+    smiley.y += smiley.speedY;
+}</code>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <label>Number of Smileys:</label>
+                            <input type="range" id="count3" min="1" max="10" value="5">
+                            <span id="count3-value">5</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Size:</label>
+                            <input type="range" id="size3" min="15" max="50" value="30">
+                            <span id="size3-value">30</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Trail Effect:</label>
+                            <select id="trail3">
+                                <option value="none">No Trail</option>
+                                <option value="fade">Fading Trail</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Try This!</h4>
+                        • Add more smileys to see them all move!<br>
+                        • Turn on the fading trail - so cool!<br>
+                        • Watch how each one moves differently
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas3" width="500" height="400"></canvas>
+                    <div class="button-group">
+                        <button class="run-button" onclick="startLesson3()">▶️ Start!</button>
+                        <button class="stop-button" onclick="stopLesson3()">⏸️ Stop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 4: Crazy Patterns -->
+        <div id="lesson4" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🌈 Awesome Patterns!</h3>
+                    <div class="explanation">
+                        <strong>Let's get creative!</strong><br>
+                        Combine everything we learned:<br>
+                        • Multiple smileys<br>
+                        • Different speeds<br>
+                        • Color changes<br>
+                        • Special motion patterns!
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Circular motion using math!</span>
+<span class="keyword">let</span> angle = <span class="number">0</span>;
+x = centerX + Math.cos(angle) * <span class="number">100</span>;
+y = centerY + Math.sin(angle) * <span class="number">100</span>;
+angle = angle + <span class="number">0.05</span>;
+
+<span class="comment">// Wave motion</span>
+y = centerY + Math.sin(x / <span class="number">50</span>) * <span class="number">50</span>;
+
+<span class="comment">// Spiral motion</span>
+radius = radius + <span class="number">0.5</span>;
+x = centerX + Math.cos(angle) * radius;
+y = centerY + Math.sin(angle) * radius;</code>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <label>Pattern Type:</label>
+                            <select id="pattern4">
+                                <option value="circle">Circle Dance</option>
+                                <option value="wave">Wave Motion</option>
+                                <option value="spiral">Spiral Out</option>
+                                <option value="bounce">Bounce Party</option>
+                                <option value="rainbow">Rainbow Trail</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label>Speed:</label>
+                            <input type="range" id="speed4" min="1" max="10" value="5">
+                            <span id="speed4-value">5</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Number:</label>
+                            <input type="range" id="count4" min="3" max="12" value="8">
+                            <span id="count4-value">8</span>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Experiment!</h4>
+                        Try all the different patterns! Each one uses math to create cool motion. Which is your favorite?
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas4" width="500" height="400"></canvas>
+                    <div class="button-group">
+                        <button class="run-button" onclick="startLesson4()">▶️ Start!</button>
+                        <button class="stop-button" onclick="stopLesson4()">⏸️ Stop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global animation IDs
+        let anim1, anim2, anim3, anim4;
+        
+        // Color selection for Lesson 1
+        let selectedColor1 = 'yellow';
+        
+        function selectColor1(color, element) {
+            selectedColor1 = color;
+            document.querySelectorAll('#lesson1 .color-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        
+        // Update slider values display
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            const valueDisplay = document.getElementById(slider.id + '-value');
+            slider.addEventListener('input', () => {
+                if (valueDisplay) valueDisplay.textContent = slider.value;
+            });
+        });
+        
+        function showLesson(num) {
+            // Stop all animations
+            cancelAnimationFrame(anim1);
+            cancelAnimationFrame(anim2);
+            cancelAnimationFrame(anim3);
+            cancelAnimationFrame(anim4);
+            
+            // Hide all lessons
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('lesson' + i).classList.remove('active');
+            }
+            
+            // Remove active from all tabs
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected lesson
+            document.getElementById('lesson' + num).classList.add('active');
+            tabs[num - 1].classList.add('active');
+        }
+        
+        // Helper function to draw a smiley
+        function drawSmiley(ctx, x, y, size, color) {
+            // Face
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Eyes
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(x - size/3, y - size/4, size/8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + size/3, y - size/4, size/8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Smile
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = size/15;
+            ctx.beginPath();
+            ctx.arc(x, y + size/8, size/2, 0, Math.PI);
+            ctx.stroke();
+        }
+        
+        // LESSON 1: Basic Bouncing
+        let smiley1 = { x: 100, y: 100, speedX: 3, speedY: 2 };
+        
+        function startLesson1() {
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            const size = parseInt(document.getElementById('size1').value);
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Move smiley
+                smiley1.x += smiley1.speedX;
+                smiley1.y += smiley1.speedY;
+                
+                // Bounce off walls
+                if (smiley1.x > canvas.width - size || smiley1.x < size) {
+                    smiley1.speedX = -smiley1.speedX;
+                }
+                if (smiley1.y > canvas.height - size || smiley1.y < size) {
+                    smiley1.speedY = -smiley1.speedY;
+                }
+                
+                drawSmiley(ctx, smiley1.x, smiley1.y, size, selectedColor1);
+                
+                anim1 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLesson1() {
+            cancelAnimationFrame(anim1);
+        }
+        
+        // LESSON 2: Speed Control
+        let smiley2 = { x: 250, y: 200 };
+        
+        function startLesson2() {
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                const speedX = parseInt(document.getElementById('speedX2').value);
+                const speedY = parseInt(document.getElementById('speedY2').value);
+                const size = parseInt(document.getElementById('size2').value);
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                smiley2.speedX = smiley2.speedX || speedX;
+                smiley2.speedY = smiley2.speedY || speedY;
+                
+                // Move
+                smiley2.x += smiley2.speedX;
+                smiley2.y += smiley2.speedY;
+                
+                // Bounce
+                if (smiley2.x > canvas.width - size || smiley2.x < size) {
+                    smiley2.speedX = -Math.sign(smiley2.speedX) * speedX;
+                }
+                if (smiley2.y > canvas.height - size || smiley2.y < size) {
+                    smiley2.speedY = -Math.sign(smiley2.speedY) * speedY;
+                }
+                
+                drawSmiley(ctx, smiley2.x, smiley2.y, size, 'yellow');
+                
+                anim2 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLesson2() {
+            cancelAnimationFrame(anim2);
+        }
+        
+        // LESSON 3: Multiple Smileys
+        let smileys3 = [];
+        
+        function initSmileys3() {
+            const count = parseInt(document.getElementById('count3').value);
+            smileys3 = [];
+            
+            for (let i = 0; i < count; i++) {
+                smileys3.push({
+                    x: 50 + Math.random() * 400,
+                    y: 50 + Math.random() * 300,
+                    speedX: (Math.random() - 0.5) * 6 + 2,
+                    speedY: (Math.random() - 0.5) * 6 + 2,
+                    color: `hsl(${i * (360 / count)}, 70%, 60%)`
+                });
+            }
+        }
+        
+        function startLesson3() {
+            initSmileys3();
+            const canvas = document.getElementById('canvas3');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                const size = parseInt(document.getElementById('size3').value);
+                const trail = document.getElementById('trail3').value;
+                
+                if (trail === 'fade') {
+                    ctx.fillStyle = 'rgba(232, 244, 248, 0.1)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                for (let smiley of smileys3) {
+                    smiley.x += smiley.speedX;
+                    smiley.y += smiley.speedY;
+                    
+                    if (smiley.x > canvas.width - size || smiley.x < size) {
+                        smiley.speedX = -smiley.speedX;
+                    }
+                    if (smiley.y > canvas.height - size || smiley.y < size) {
+                        smiley.speedY = -smiley.speedY;
+                    }
+                    
+                    drawSmiley(ctx, smiley.x, smiley.y, size, smiley.color);
+                }
+                
+                anim3 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLesson3() {
+            cancelAnimationFrame(anim3);
+        }
+        
+        // LESSON 4: Patterns
+        let smileys4 = [];
+        let angle4 = 0;
+        let radius4 = 0;
+        
+        function initSmileys4() {
+            const count = parseInt(document.getElementById('count4').value);
+            smileys4 = [];
+            
+            for (let i = 0; i < count; i++) {
+                smileys4.push({
+                    angle: (i / count) * Math.PI * 2,
+                    color: `hsl(${i * (360 / count)}, 80%, 60%)`,
+                    offset: i
+                });
+            }
+        }
+        
+        function startLesson4() {
+            initSmileys4();
+            angle4 = 0;
+            radius4 = 50;
+            
+            const canvas = document.getElementById('canvas4');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            function animate() {
+                const pattern = document.getElementById('pattern4').value;
+                const speed = parseInt(document.getElementById('speed4').value) / 100;
+                
+                ctx.fillStyle = 'rgba(232, 244, 248, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                angle4 += speed;
+                
+                for (let i = 0; i < smileys4.length; i++) {
+                    let x, y;
+                    const smiley = smileys4[i];
+                    
+                    switch(pattern) {
+                        case 'circle':
+                            x = centerX + Math.cos(angle4 + smiley.angle) * 120;
+                            y = centerY + Math.sin(angle4 + smiley.angle) * 120;
+                            break;
+                        case 'wave':
+                            x = 50 + (canvas.width - 100) * (i / smileys4.length);
+                            y = centerY + Math.sin(angle4 + i) * 80;
+                            break;
+                        case 'spiral':
+                            const r = (angle4 * 10) % 150;
+                            x = centerX + Math.cos(angle4 + smiley.angle) * r;
+                            y = centerY + Math.sin(angle4 + smiley.angle) * r;
+                            break;
+                        case 'bounce':
+                            x = 50 + (canvas.width - 100) * (i / smileys4.length);
+                            y = centerY + Math.abs(Math.sin(angle4 * 2 + i)) * 120 - 60;
+                            break;
+                        case 'rainbow':
+                            x = centerX + Math.cos(angle4 * 2 + smiley.angle) * 100;
+                            y = centerY + Math.sin(angle4 + smiley.angle * 0.5) * 80;
+                            break;
+                    }
+                    
+                    drawSmiley(ctx, x, y, 25, smiley.color);
+                }
+                
+                anim4 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLesson4() {
+            cancelAnimationFrame(anim4);
+        }
+    </script>
+</body>
+</html>

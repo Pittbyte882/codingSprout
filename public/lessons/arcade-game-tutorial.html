@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your Own Arcade Game!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            color: #2d3748;
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 3em;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.3em;
+        }
+        
+        .lesson-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 15px 25px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            opacity: 0.6;
+        }
+        
+        .tab-button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .tab-button.active {
+            opacity: 1;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .lesson-content {
+            display: none;
+        }
+        
+        .lesson-content.active {
+            display: block;
+        }
+        
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .lesson-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .code-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .code-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .explanation {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #f59e0b;
+            font-size: 1.05em;
+        }
+        
+        .explanation strong {
+            color: #92400e;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .code-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        .code-box code {
+            display: block;
+            white-space: pre;
+        }
+        
+        .keyword {
+            color: #c792ea;
+        }
+        
+        .string {
+            color: #c3e88d;
+        }
+        
+        .number {
+            color: #f78c6c;
+        }
+        
+        .comment {
+            color: #697098;
+            font-style: italic;
+        }
+        
+        .function {
+            color: #82aaff;
+        }
+        
+        canvas {
+            border: 4px solid #667eea;
+            border-radius: 15px;
+            background: #0f172a;
+            width: 100%;
+            max-width: 600px;
+            height: 500px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .game-button {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .game-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+        
+        .stop-button {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+        
+        .stop-button:hover {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+        
+        .reset-button {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+        
+        .reset-button:hover {
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+        }
+        
+        .challenge {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 5px solid #3b82f6;
+        }
+        
+        .challenge h4 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .challenge ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .challenge li {
+            margin: 8px 0;
+            color: #1e3a8a;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .control-row label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 120px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .value-display {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .score-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            border: 3px solid #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .instructions {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #10b981;
+        }
+        
+        .instructions strong {
+            color: #065f46;
+        }
+        
+        .key-hint {
+            display: inline-block;
+            background: #374151;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 CODE YOUR OWN GAME 🕹️</h1>
+        <p class="subtitle">Learn to code by building an awesome arcade game!</p>
+        
+        <div class="lesson-tabs">
+            <button class="tab-button active" onclick="showLesson(1)">Level 1: Moving Player</button>
+            <button class="tab-button" onclick="showLesson(2)">Level 2: Add Obstacles</button>
+            <button class="tab-button" onclick="showLesson(3)">Level 3: Collision Detection</button>
+            <button class="tab-button" onclick="showLesson(4)">Level 4: Full Game!</button>
+        </div>
+        
+        <!-- LEVEL 1: Moving Player -->
+        <div id="lesson1" class="lesson-content active">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🎯 Level 1: Control Your Character</h3>
+                    <div class="explanation">
+                        <strong>Every game needs a player you can control!</strong>
+                        In this level, you'll learn how to move a character with keyboard keys. This uses "event listeners" - code that waits for you to press a key, then does something.
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Create player object with position</span>
+<span class="keyword">let</span> player = {
+    x: <span class="number">50</span>,
+    y: <span class="number">250</span>,
+    width: <span class="number">30</span>,
+    height: <span class="number">30</span>,
+    speed: <span class="number">5</span>
+};
+
+<span class="comment">// Listen for keyboard presses</span>
+document.<span class="function">addEventListener</span>(<span class="string">'keydown'</span>, (e) => {
+    <span class="keyword">if</span> (e.key === <span class="string">'ArrowUp'</span>) {
+        player.y -= player.speed;
+    }
+    <span class="keyword">if</span> (e.key === <span class="string">'ArrowDown'</span>) {
+        player.y += player.speed;
+    }
+});
+
+<span class="comment">// Draw the player</span>
+ctx.<span class="function">fillRect</span>(player.x, player.y, 
+              player.width, player.height);</code>
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>🎮 Controls:</strong> Use <span class="key-hint">↑</span> and <span class="key-hint">↓</span> arrow keys to move your character up and down!
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <label>Player Speed:</label>
+                            <input type="range" id="speed1" min="3" max="15" value="7">
+                            <span class="value-display" id="speed1-value">7</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Player Size:</label>
+                            <input type="range" id="size1" min="20" max="60" value="30">
+                            <span class="value-display" id="size1-value">30</span>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        <ul>
+                            <li><strong>Objects:</strong> Grouping related data (x, y, speed)</li>
+                            <li><strong>Event Listeners:</strong> Responding to user input</li>
+                            <li><strong>Conditionals:</strong> If key is pressed, then move</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <canvas id="canvas1" width="600" height="500"></canvas>
+                    <div class="button-group">
+                        <button class="game-button" onclick="startLevel1()">▶️ Start Game</button>
+                        <button class="game-button stop-button" onclick="stopLevel1()">⏸️ Pause</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEVEL 2: Add Obstacles -->
+        <div id="lesson2" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🚧 Level 2: Dodge the Obstacles!</h3>
+                    <div class="explanation">
+                        <strong>Now let's add obstacles that move across the screen!</strong>
+                        This teaches you about arrays (lists) and loops. Instead of coding one obstacle, we'll create many obstacles using a loop - way more efficient!
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Array to hold multiple obstacles</span>
+<span class="keyword">let</span> obstacles = [];
+
+<span class="comment">// Create obstacles with random positions</span>
+<span class="keyword">function</span> <span class="function">createObstacle</span>() {
+    obstacles.<span class="function">push</span>({
+        x: <span class="number">600</span>,
+        y: Math.<span class="function">random</span>() * <span class="number">450</span>,
+        width: <span class="number">30</span>,
+        height: <span class="number">50</span>,
+        speed: <span class="number">3</span>
+    });
+}
+
+<span class="comment">// Move all obstacles</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> obstacle <span class="keyword">of</span> obstacles) {
+    obstacle.x -= obstacle.speed;
+    
+    <span class="comment">// Remove if off screen</span>
+    <span class="keyword">if</span> (obstacle.x < -<span class="number">50</span>) {
+        obstacles.<span class="function">splice</span>(i, <span class="number">1</span>);
+    }
+}</code>
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>🎮 Controls:</strong> Use <span class="key-hint">↑</span> and <span class="key-hint">↓</span> arrow keys to dodge the red obstacles!
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <label>Obstacle Speed:</label>
+                            <input type="range" id="obstacleSpeed2" min="2" max="10" value="4">
+                            <span class="value-display" id="obstacleSpeed2-value">4</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Spawn Rate:</label>
+                            <input type="range" id="spawnRate2" min="1" max="5" value="2">
+                            <span class="value-display" id="spawnRate2-value">2</span>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        <ul>
+                            <li><strong>Arrays:</strong> Storing multiple obstacles in a list</li>
+                            <li><strong>Loops:</strong> Processing all obstacles at once</li>
+                            <li><strong>Functions:</strong> Creating reusable code</li>
+                            <li><strong>Randomness:</strong> Making obstacles appear at different heights</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <canvas id="canvas2" width="600" height="500"></canvas>
+                    <div class="button-group">
+                        <button class="game-button" onclick="startLevel2()">▶️ Start Game</button>
+                        <button class="game-button stop-button" onclick="stopLevel2()">⏸️ Pause</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEVEL 3: Collision Detection -->
+        <div id="lesson3" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>💥 Level 3: Detect Crashes!</h3>
+                    <div class="explanation">
+                        <strong>What happens when you hit an obstacle?</strong>
+                        We need "collision detection" - code that checks if two objects are touching. This is crucial for every game! We'll also add a score system.
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Function to check if two rectangles overlap</span>
+<span class="keyword">function</span> <span class="function">checkCollision</span>(rect1, rect2) {
+    <span class="keyword">return</span> rect1.x < rect2.x + rect2.width &&
+           rect1.x + rect1.width > rect2.x &&
+           rect1.y < rect2.y + rect2.height &&
+           rect1.y + rect1.height > rect2.y;
+}
+
+<span class="comment">// Check each obstacle</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> obstacle <span class="keyword">of</span> obstacles) {
+    <span class="keyword">if</span> (<span class="function">checkCollision</span>(player, obstacle)) {
+        <span class="comment">// Game Over!</span>
+        gameOver = <span class="keyword">true</span>;
+        <span class="function">showGameOver</span>();
+    }
+}
+
+<span class="comment">// Track score for dodged obstacles</span>
+score++;</code>
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>🎮 Goal:</strong> Dodge obstacles to increase your score. Touch one and it's game over!
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <label>Difficulty:</label>
+                            <input type="range" id="difficulty3" min="1" max="3" value="2">
+                            <span class="value-display" id="difficulty3-value">Medium</span>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 What You're Learning:</h4>
+                        <ul>
+                            <li><strong>Collision Detection:</strong> Math to check if objects overlap</li>
+                            <li><strong>Game State:</strong> Tracking if game is playing or over</li>
+                            <li><strong>Score Systems:</strong> Keeping track of player progress</li>
+                            <li><strong>Boolean Logic:</strong> Checking multiple conditions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <div class="score-display">Score: <span id="score3">0</span></div>
+                    <canvas id="canvas3" width="600" height="500"></canvas>
+                    <div class="button-group">
+                        <button class="game-button" onclick="startLevel3()">▶️ Start Game</button>
+                        <button class="game-button stop-button" onclick="stopLevel3()">⏸️ Pause</button>
+                        <button class="game-button reset-button" onclick="resetLevel3()">🔄 Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEVEL 4: Complete Game -->
+        <div id="lesson4" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🏆 Level 4: The Complete Game!</h3>
+                    <div class="explanation">
+                        <strong>Put it all together + power-ups and levels!</strong>
+                        This is a fully functional game with:<br>
+                        • Multiple difficulty levels<br>
+                        • Power-ups to collect<br>
+                        • Progressive difficulty<br>
+                        • High score tracking<br>
+                        • Visual effects
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Power-up system</span>
+<span class="keyword">let</span> powerups = [];
+
+<span class="keyword">function</span> <span class="function">createPowerup</span>() {
+    powerups.<span class="function">push</span>({
+        x: <span class="number">600</span>,
+        y: Math.<span class="function">random</span>() * <span class="number">450</span>,
+        type: <span class="string">'shield'</span>, <span class="comment">// or 'speed', 'slow'</span>
+        active: <span class="keyword">true</span>
+    });
+}
+
+<span class="comment">// Progressive difficulty</span>
+<span class="keyword">if</span> (score % <span class="number">100</span> === <span class="number">0</span>) {
+    obstacleSpeed += <span class="number">0.5</span>;
+    spawnRate *= <span class="number">0.9</span>;
+}
+
+<span class="comment">// Visual effects</span>
+<span class="keyword">if</span> (shieldActive) {
+    <span class="comment">// Draw shield glow around player</span>
+    ctx.<span class="function">arc</span>(player.x, player.y, <span class="number">40</span>, 
+            <span class="number">0</span>, Math.PI * <span class="number">2</span>);
+}</code>
+                    </div>
+                    
+                    <div class="instructions">
+                        <strong>🎮 Controls:</strong> <span class="key-hint">↑</span> <span class="key-hint">↓</span> to move<br>
+                        <strong>🎯 Power-ups:</strong><br>
+                        🛡️ <strong>Blue</strong> = Shield (temporary invincibility)<br>
+                        ⚡ <strong>Yellow</strong> = Speed Boost<br>
+                        🐌 <strong>Green</strong> = Slow Motion
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>💡 Challenge Yourself:</h4>
+                        <ul>
+                            <li>Try to beat your high score!</li>
+                            <li>Game gets harder every 100 points</li>
+                            <li>Collect power-ups strategically</li>
+                            <li>See how the code combines everything you learned!</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="challenge" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-left-color: #ec4899;">
+                        <h4 style="color: #be185d;">🎨 Customize Your Game:</h4>
+                        Try changing these values in the code to make it YOUR game!
+                    </div>
+                </div>
+                
+                <div class="game-container">
+                    <div class="score-display">
+                        Score: <span id="score4">0</span> | 
+                        High Score: <span id="highscore4">0</span>
+                    </div>
+                    <canvas id="canvas4" width="600" height="500"></canvas>
+                    <div class="button-group">
+                        <button class="game-button" onclick="startLevel4()">▶️ Start Game</button>
+                        <button class="game-button stop-button" onclick="stopLevel4()">⏸️ Pause</button>
+                        <button class="game-button reset-button" onclick="resetLevel4()">🔄 Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global animation IDs
+        let anim1, anim2, anim3, anim4;
+        
+        // Update slider value displays
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            const valueDisplay = document.getElementById(slider.id + '-value');
+            slider.addEventListener('input', () => {
+                if (valueDisplay) {
+                    if (slider.id === 'difficulty3') {
+                        const levels = ['Easy', 'Medium', 'Hard'];
+                        valueDisplay.textContent = levels[slider.value - 1];
+                    } else {
+                        valueDisplay.textContent = slider.value;
+                    }
+                }
+            });
+        });
+        
+        function showLesson(num) {
+            // Stop all animations
+            cancelAnimationFrame(anim1);
+            cancelAnimationFrame(anim2);
+            cancelAnimationFrame(anim3);
+            cancelAnimationFrame(anim4);
+            
+            // Hide all lessons
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('lesson' + i).classList.remove('active');
+            }
+            
+            // Remove active from all tabs
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected lesson
+            document.getElementById('lesson' + num).classList.add('active');
+            tabs[num - 1].classList.add('active');
+        }
+        
+        // ============= LEVEL 1: Moving Player =============
+        let player1 = { x: 50, y: 250, width: 30, height: 30, speed: 7 };
+        let keys1 = {};
+        
+        document.addEventListener('keydown', (e) => {
+            keys1[e.key] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys1[e.key] = false;
+        });
+        
+        function startLevel1() {
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                const speed = parseInt(document.getElementById('speed1').value);
+                const size = parseInt(document.getElementById('size1').value);
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Move player
+                if (keys1['ArrowUp'] && player1.y > 0) {
+                    player1.y -= speed;
+                }
+                if (keys1['ArrowDown'] && player1.y < canvas.height - size) {
+                    player1.y += speed;
+                }
+                
+                // Draw player
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(player1.x, player1.y, size, size);
+                
+                // Draw player details (face)
+                ctx.fillStyle = 'white';
+                ctx.fillRect(player1.x + size/4, player1.y + size/3, size/8, size/8);
+                ctx.fillRect(player1.x + size*0.6, player1.y + size/3, size/8, size/8);
+                
+                // Instructions
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText('Use ↑ and ↓ arrow keys to move!', 150, 50);
+                
+                anim1 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLevel1() {
+            cancelAnimationFrame(anim1);
+        }
+        
+        // ============= LEVEL 2: Obstacles =============
+        let player2 = { x: 50, y: 250, width: 30, height: 30 };
+        let obstacles2 = [];
+        let frameCount2 = 0;
+        
+        function createObstacle2() {
+            obstacles2.push({
+                x: 600,
+                y: Math.random() * 450,
+                width: 30,
+                height: 50,
+                speed: parseInt(document.getElementById('obstacleSpeed2').value)
+            });
+        }
+        
+        function startLevel2() {
+            obstacles2 = [];
+            frameCount2 = 0;
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Move player
+                if (keys1['ArrowUp'] && player2.y > 0) player2.y -= 7;
+                if (keys1['ArrowDown'] && player2.y < canvas.height - 30) player2.y += 7;
+                
+                // Create obstacles
+                const spawnRate = parseInt(document.getElementById('spawnRate2').value);
+                if (frameCount2 % (60 / spawnRate) === 0) {
+                    createObstacle2();
+                }
+                
+                // Move and draw obstacles
+                for (let i = obstacles2.length - 1; i >= 0; i--) {
+                    const obs = obstacles2[i];
+                    obs.x -= obs.speed;
+                    
+                    if (obs.x < -50) {
+                        obstacles2.splice(i, 1);
+                    } else {
+                        ctx.fillStyle = '#ef4444';
+                        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    }
+                }
+                
+                // Draw player
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(player2.x, player2.y, player2.width, player2.height);
+                
+                // Instructions
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText('Dodge the obstacles!', 200, 50);
+                ctx.fillText('Obstacles: ' + obstacles2.length, 20, 30);
+                
+                frameCount2++;
+                anim2 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLevel2() {
+            cancelAnimationFrame(anim2);
+        }
+        
+        // ============= LEVEL 3: Collision Detection =============
+        let player3 = { x: 50, y: 250, width: 30, height: 30 };
+        let obstacles3 = [];
+        let score3 = 0;
+        let gameOver3 = false;
+        let frameCount3 = 0;
+        
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+        
+        function startLevel3() {
+            if (!gameOver3) return;
+            resetLevel3();
+            
+            const canvas = document.getElementById('canvas3');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                if (gameOver3) return;
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const difficulty = parseInt(document.getElementById('difficulty3').value);
+                const speeds = [3, 5, 7];
+                const rates = [90, 60, 40];
+                
+                // Move player
+                if (keys1['ArrowUp'] && player3.y > 0) player3.y -= 7;
+                if (keys1['ArrowDown'] && player3.y < canvas.height - 30) player3.y += 7;
+                
+                // Create obstacles
+                if (frameCount3 % rates[difficulty - 1] === 0) {
+                    obstacles3.push({
+                        x: 600,
+                        y: Math.random() * 450,
+                        width: 30,
+                        height: 50,
+                        speed: speeds[difficulty - 1]
+                    });
+                }
+                
+                // Move obstacles and check collisions
+                for (let i = obstacles3.length - 1; i >= 0; i--) {
+                    const obs = obstacles3[i];
+                    obs.x -= obs.speed;
+                    
+                    if (obs.x < -50) {
+                        obstacles3.splice(i, 1);
+                        score3++;
+                        document.getElementById('score3').textContent = score3;
+                    } else {
+                        if (checkCollision(player3, obs)) {
+                            gameOver3 = true;
+                            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 48px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('GAME OVER!', canvas.width/2, canvas.height/2);
+                            ctx.font = '24px Arial';
+                            ctx.fillText('Final Score: ' + score3, canvas.width/2, canvas.height/2 + 50);
+                            ctx.fillText('Click Reset to try again', canvas.width/2, canvas.height/2 + 90);
+                            return;
+                        }
+                        ctx.fillStyle = '#ef4444';
+                        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    }
+                }
+                
+                // Draw player
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(player3.x, player3.y, player3.width, player3.height);
+                
+                frameCount3++;
+                anim3 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLevel3() {
+            gameOver3 = true;
+            cancelAnimationFrame(anim3);
+        }
+        
+        function resetLevel3() {
+            player3 = { x: 50, y: 250, width: 30, height: 30 };
+            obstacles3 = [];
+            score3 = 0;
+            gameOver3 = false;
+            frameCount3 = 0;
+            document.getElementById('score3').textContent = '0';
+            startLevel3();
+        }
+        
+        // ============= LEVEL 4: Complete Game =============
+        let player4 = { x: 50, y: 250, width: 30, height: 30, shielded: false, shieldTime: 0 };
+        let obstacles4 = [];
+        let powerups4 = [];
+        let score4 = 0;
+        let highScore4 = 0;
+        let gameOver4 = false;
+        let frameCount4 = 0;
+        let baseSpeed4 = 4;
+        let slowMo4 = false;
+        let slowMoTime4 = 0;
+        
+        function createPowerup4() {
+            const types = ['shield', 'speed', 'slow'];
+            const colors = ['#3b82f6', '#fbbf24', '#10b981'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            powerups4.push({
+                x: 600,
+                y: Math.random() * 450,
+                width: 25,
+                height: 25,
+                type: type,
+                color: colors[types.indexOf(type)]
+            });
+        }
+        
+        function startLevel4() {
+            if (!gameOver4) return;
+            resetLevel4();
+            
+            const canvas = document.getElementById('canvas4');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                if (gameOver4) return;
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Progressive difficulty
+                const currentSpeed = baseSpeed4 + Math.floor(score4 / 50) * 0.5;
+                
+                // Move player
+                if (keys1['ArrowUp'] && player4.y > 0) player4.y -= 8;
+                if (keys1['ArrowDown'] && player4.y < canvas.height - 30) player4.y += 8;
+                
+                // Create obstacles
+                const spawnRate = Math.max(40, 70 - Math.floor(score4 / 100) * 10);
+                if (frameCount4 % spawnRate === 0) {
+                    obstacles4.push({
+                        x: 600,
+                        y: Math.random() * 450,
+                        width: 30,
+                        height: 50,
+                        speed: currentSpeed
+                    });
+                }
+                
+                // Create powerups
+                if (frameCount4 % 300 === 0) {
+                    createPowerup4();
+                }
+                
+                const timeMultiplier = slowMo4 ? 0.5 : 1;
+                
+                // Move obstacles
+                for (let i = obstacles4.length - 1; i >= 0; i--) {
+                    const obs = obstacles4[i];
+                    obs.x -= obs.speed * timeMultiplier;
+                    
+                    if (obs.x < -50) {
+                        obstacles4.splice(i, 1);
+                        score4++;
+                        document.getElementById('score4').textContent = score4;
+                    } else {
+                        if (!player4.shielded && checkCollision(player4, obs)) {
+                            gameOver4 = true;
+                            if (score4 > highScore4) {
+                                highScore4 = score4;
+                                document.getElementById('highscore4').textContent = highScore4;
+                            }
+                            ctx.fillStyle = 'rgba(239, 68, 68, 0.7)';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 48px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('GAME OVER!', canvas.width/2, canvas.height/2 - 30);
+                            ctx.font = '28px Arial';
+                            ctx.fillText('Score: ' + score4, canvas.width/2, canvas.height/2 + 20);
+                            if (score4 === highScore4 && score4 > 0) {
+                                ctx.fillText('🏆 NEW HIGH SCORE! 🏆', canvas.width/2, canvas.height/2 + 60);
+                            }
+                            ctx.font = '20px Arial';
+                            ctx.fillText('Click Reset to play again', canvas.width/2, canvas.height/2 + 100);
+                            return;
+                        }
+                        ctx.fillStyle = '#ef4444';
+                        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    }
+                }
+                
+                // Move powerups
+                for (let i = powerups4.length - 1; i >= 0; i--) {
+                    const pow = powerups4[i];
+                    pow.x -= 3 * timeMultiplier;
+                    
+                    if (pow.x < -50) {
+                        powerups4.splice(i, 1);
+                    } else {
+                        if (checkCollision(player4, pow)) {
+                            if (pow.type === 'shield') {
+                                player4.shielded = true;
+                                player4.shieldTime = 180;
+                            } else if (pow.type === 'slow') {
+                                slowMo4 = true;
+                                slowMoTime4 = 180;
+                            }
+                            powerups4.splice(i, 1);
+                        } else {
+                            ctx.fillStyle = pow.color;
+                            ctx.beginPath();
+                            ctx.arc(pow.x + pow.width/2, pow.y + pow.height/2, pow.width/2, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+                
+                // Update power-up timers
+                if (player4.shielded) {
+                    player4.shieldTime--;
+                    if (player4.shieldTime <= 0) player4.shielded = false;
+                }
+                
+                if (slowMo4) {
+                    slowMoTime4--;
+                    if (slowMoTime4 <= 0) slowMo4 = false;
+                }
+                
+                // Draw player with shield
+                if (player4.shielded) {
+                    ctx.strokeStyle = '#3b82f6';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(player4.x + 15, player4.y + 15, 25, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                ctx.fillStyle = player4.shielded ? '#3b82f6' : '#10b981';
+                ctx.fillRect(player4.x, player4.y, player4.width, player4.height);
+                
+                // Draw effects
+                if (slowMo4) {
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                // HUD
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'left';
+                if (player4.shielded) {
+                    ctx.fillText('🛡️ Shield: ' + Math.ceil(player4.shieldTime/60) + 's', 10, 25);
+                }
+                if (slowMo4) {
+                    ctx.fillText('🐌 Slow-Mo: ' + Math.ceil(slowMoTime4/60) + 's', 10, 50);
+                }
+                
+                frameCount4++;
+                anim4 = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function stopLevel4() {
+            gameOver4 = true;
+            cancelAnimationFrame(anim4);
+        }
+        
+        function resetLevel4() {
+            player4 = { x: 50, y: 250, width: 30, height: 30, shielded: false, shieldTime: 0 };
+            obstacles4 = [];
+            powerups4 = [];
+            score4 = 0;
+            gameOver4 = false;
+            frameCount4 = 0;
+            baseSpeed4 = 4;
+            slowMo4 = false;
+            slowMoTime4 = 0;
+            document.getElementById('score4').textContent = '0';
+            startLevel4();
+        }
+        
+        // Auto-start Level 1 on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => startLevel1(), 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn to Code - Draw & Create!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        
+        .lesson-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 12px 20px;
+            border: none;
+            background: #e0e7ff;
+            color: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .lesson-content {
+            display: none;
+        }
+        
+        .lesson-content.active {
+            display: block;
+        }
+        
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .lesson-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .code-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .code-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .explanation {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .code-box {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        
+        .code-box code {
+            display: block;
+            white-space: pre;
+        }
+        
+        .keyword {
+            color: #f687b3;
+        }
+        
+        .string {
+            color: #68d391;
+        }
+        
+        .number {
+            color: #90cdf4;
+        }
+        
+        .comment {
+            color: #a0aec0;
+        }
+        
+        canvas {
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+        }
+        
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .run-button {
+            padding: 15px 40px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .run-button:hover {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+        
+        .challenge {
+            background: #e6fffa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 5px solid #38b2ac;
+        }
+        
+        .challenge h4 {
+            color: #38b2ac;
+            margin-bottom: 10px;
+        }
+        
+        input[type="number"], input[type="text"], select {
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 5px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Learn to Code with Art! 🚀</h1>
+        <p class="subtitle">See your code come to life!</p>
+        
+        <div class="lesson-tabs">
+            <button class="tab-button active" onclick="showLesson(1)">Lesson 1: Variables</button>
+            <button class="tab-button" onclick="showLesson(2)">Lesson 2: Loops</button>
+            <button class="tab-button" onclick="showLesson(3)">Lesson 3: If/Then</button>
+            <button class="tab-button" onclick="showLesson(4)">Lesson 4: Functions</button>
+        </div>
+        
+        <!-- LESSON 1: Variables -->
+        <div id="lesson1" class="lesson-content active">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>📦 What are Variables?</h3>
+                    <div class="explanation">
+                        <strong>Think of variables like labeled boxes!</strong><br>
+                        You can put things inside them and use them later.
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// We put a number in a box called "size"</span>
+<span class="keyword">let</span> size = <span class="number">50</span>;
+
+<span class="comment">// We put a color in a box called "color"</span>
+<span class="keyword">let</span> color = <span class="string">"blue"</span>;
+
+<span class="comment">// Now we can use them to draw!</span>
+drawCircle(size, color);</code>
+                    </div>
+                    
+                    <div class="controls">
+                        <label>Circle Size: <input type="number" id="circleSize" value="50" min="10" max="150"></label>
+                        <label>Color: 
+                            <select id="circleColor">
+                                <option value="red">Red</option>
+                                <option value="blue" selected>Blue</option>
+                                <option value="green">Green</option>
+                                <option value="purple">Purple</option>
+                                <option value="orange">Orange</option>
+                            </select>
+                        </label>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Try This!</h4>
+                        Change the size and color above, then click "Draw It!" to see what happens!
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas1" width="500" height="400"></canvas>
+                    <button class="run-button" onclick="runLesson1()">✨ Draw It!</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 2: Loops -->
+        <div id="lesson2" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🔁 What are Loops?</h3>
+                    <div class="explanation">
+                        <strong>Loops help us repeat actions!</strong><br>
+                        Instead of writing the same code 10 times, we can use a loop!
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Draw 10 circles in a row</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">10</span>; i++) {
+    drawCircle(i * <span class="number">50</span>, <span class="number">200</span>);
+}
+
+<span class="comment">// The loop does this automatically:</span>
+<span class="comment">// i=0: draw at position 0</span>
+<span class="comment">// i=1: draw at position 50</span>
+<span class="comment">// i=2: draw at position 100</span>
+<span class="comment">// ... and so on!</span></code>
+                    </div>
+                    
+                    <div class="controls">
+                        <label>How many circles? <input type="number" id="loopCount" value="10" min="1" max="20"></label>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Try This!</h4>
+                        Change the number of circles and watch the loop work its magic!
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas2" width="500" height="400"></canvas>
+                    <button class="run-button" onclick="runLesson2()">✨ Draw It!</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 3: Conditionals -->
+        <div id="lesson3" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🤔 What are If/Then Statements?</h3>
+                    <div class="explanation">
+                        <strong>If/Then helps us make decisions!</strong><br>
+                        "IF something is true, THEN do this. ELSE do that."
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Change color based on size</span>
+<span class="keyword">if</span> (size > <span class="number">80</span>) {
+    color = <span class="string">"red"</span>;    <span class="comment">// Big circles are red</span>
+} <span class="keyword">else if</span> (size > <span class="number">40</span>) {
+    color = <span class="string">"yellow"</span>; <span class="comment">// Medium circles are yellow</span>
+} <span class="keyword">else</span> {
+    color = <span class="string">"blue"</span>;   <span class="comment">// Small circles are blue</span>
+}</code>
+                    </div>
+                    
+                    <div class="controls">
+                        <label>Circle Size: <input type="number" id="conditionalSize" value="50" min="10" max="150"></label>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Try This!</h4>
+                        Try different sizes:<br>
+                        • Less than 40 = Blue<br>
+                        • 40-80 = Yellow<br>
+                        • More than 80 = Red
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas3" width="500" height="400"></canvas>
+                    <button class="run-button" onclick="runLesson3()">✨ Draw It!</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LESSON 4: Functions -->
+        <div id="lesson4" class="lesson-content">
+            <div class="lesson-grid">
+                <div class="code-section">
+                    <h3>🎁 What are Functions?</h3>
+                    <div class="explanation">
+                        <strong>Functions are like recipes!</strong><br>
+                        You write the steps once, then use them over and over!
+                    </div>
+                    
+                    <div class="code-box">
+<code><span class="comment">// Create a function to draw a smiley face</span>
+<span class="keyword">function</span> drawSmiley(x, y, size) {
+    <span class="comment">// Draw the face</span>
+    drawCircle(x, y, size, <span class="string">"yellow"</span>);
+    
+    <span class="comment">// Draw the eyes</span>
+    drawCircle(x - <span class="number">15</span>, y - <span class="number">15</span>, <span class="number">8</span>, <span class="string">"black"</span>);
+    drawCircle(x + <span class="number">15</span>, y - <span class="number">15</span>, <span class="number">8</span>, <span class="string">"black"</span>);
+    
+    <span class="comment">// Draw the smile</span>
+    drawSmile(x, y);
+}
+
+<span class="comment">// Now we can draw lots of smileys easily!</span>
+drawSmiley(<span class="number">150</span>, <span class="number">150</span>, <span class="number">80</span>);
+drawSmiley(<span class="number">350</span>, <span class="number">150</span>, <span class="number">60</span>);</code>
+                    </div>
+                    
+                    <div class="controls">
+                        <label>Number of Smileys: <input type="number" id="smileyCount" value="3" min="1" max="8"></label>
+                    </div>
+                    
+                    <div class="challenge">
+                        <h4>🎯 Try This!</h4>
+                        Each smiley uses the SAME function, but with different values! That's the power of functions!
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas4" width="500" height="400"></canvas>
+                    <button class="run-button" onclick="runLesson4()">✨ Draw It!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showLesson(num) {
+            // Hide all lessons
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('lesson' + i).classList.remove('active');
+            }
+            
+            // Remove active from all tabs
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected lesson
+            document.getElementById('lesson' + num).classList.add('active');
+            tabs[num - 1].classList.add('active');
+        }
+        
+        // LESSON 1: Variables
+        function runLesson1() {
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Get values from inputs (these are our VARIABLES!)
+            let size = parseInt(document.getElementById('circleSize').value);
+            let color = document.getElementById('circleColor').value;
+            
+            // Draw the circle
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(250, 200, size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add a fun message
+            ctx.fillStyle = 'black';
+            ctx.font = '20px Comic Sans MS';
+            ctx.textAlign = 'center';
+            ctx.fillText('Size = ' + size, 250, 350);
+            ctx.fillText('Color = ' + color, 250, 375);
+        }
+        
+        // LESSON 2: Loops
+        function runLesson2() {
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let count = parseInt(document.getElementById('loopCount').value);
+            
+            // This is a LOOP! It repeats the code inside
+            for (let i = 0; i < count; i++) {
+                ctx.fillStyle = `hsl(${i * (360 / count)}, 70%, 60%)`;
+                ctx.beginPath();
+                ctx.arc(50 + (i * 40), 200, 20, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add number labels
+                ctx.fillStyle = 'black';
+                ctx.font = '14px Comic Sans MS';
+                ctx.textAlign = 'center';
+                ctx.fillText(i + 1, 50 + (i * 40), 250);
+            }
+            
+            ctx.fillStyle = 'black';
+            ctx.font = '18px Comic Sans MS';
+            ctx.textAlign = 'center';
+            ctx.fillText('The loop drew ' + count + ' circles!', 250, 350);
+        }
+        
+        // LESSON 3: Conditionals
+        function runLesson3() {
+            const canvas = document.getElementById('canvas3');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let size = parseInt(document.getElementById('conditionalSize').value);
+            let color;
+            let message;
+            
+            // This is a CONDITIONAL! It makes decisions
+            if (size > 80) {
+                color = 'red';
+                message = 'BIG circle → RED!';
+            } else if (size > 40) {
+                color = 'yellow';
+                message = 'Medium circle → YELLOW!';
+            } else {
+                color = 'blue';
+                message = 'Small circle → BLUE!';
+            }
+            
+            // Draw the circle
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(250, 200, size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add messages
+            ctx.fillStyle = 'black';
+            ctx.font = '20px Comic Sans MS';
+            ctx.textAlign = 'center';
+            ctx.fillText(message, 250, 350);
+        }
+        
+        // LESSON 4: Functions
+        function drawSmileyFace(ctx, x, y, size) {
+            // Face
+            ctx.fillStyle = 'yellow';
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'orange';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Eyes
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(x - size/3, y - size/4, size/10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + size/3, y - size/4, size/10, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Smile
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(x, y, size/2, 0, Math.PI);
+            ctx.stroke();
+        }
+        
+        function runLesson4() {
+            const canvas = document.getElementById('canvas4');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let count = parseInt(document.getElementById('smileyCount').value);
+            
+            // Use our FUNCTION multiple times!
+            for (let i = 0; i < count; i++) {
+                let x = 80 + (i * (340 / (count - 1)));
+                let y = 150 + Math.sin(i) * 50;
+                let size = 30 + (i * 10);
+                drawSmileyFace(ctx, x, y, size);
+            }
+            
+            ctx.fillStyle = 'black';
+            ctx.font = '18px Comic Sans MS';
+            ctx.textAlign = 'center';
+            ctx.fillText('Each smiley uses the SAME function!', 250, 350);
+        }
+        
+        // Run lesson 1 on load
+        runLesson1();
+    </script>
+</body>
+</html>
