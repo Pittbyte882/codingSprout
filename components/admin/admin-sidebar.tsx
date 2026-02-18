@@ -15,6 +15,7 @@ import {
   HandHeart,
   Settings,
 } from "lucide-react"
+import { FileText } from "lucide-react"
 import type { Profile } from "@/lib/types"
 
 interface AdminSidebarProps {
@@ -32,6 +33,7 @@ const navItems = [
   { label: "Donations", href: "/admin/donations", icon: Heart },
   { label: "Volunteers", href: "/admin/volunteers", icon: HandHeart },
   { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Blog", href: "/admin/blog", icon: FileText },
 ]
 
 export function AdminSidebar({ profile }: AdminSidebarProps) {

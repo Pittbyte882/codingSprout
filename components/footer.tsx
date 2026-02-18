@@ -6,6 +6,7 @@ const footerLinks = {
   programs: [
     { label: "Classes", href: "/classes" },
     { label: "Events", href: "/events" },
+    { label: "Blog", href: "/blog" },
     { label: "Online Learning", href: "/classes?type=online" },
     { label: "One-on-One", href: "/classes?type=individual" },
   ],
