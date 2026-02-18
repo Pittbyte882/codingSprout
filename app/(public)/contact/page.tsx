@@ -18,8 +18,8 @@ const contactInfo = [
   {
     icon: Phone,
     title: "Phone",
-    content: "(951) 434-8093",
-    href: "tel:+19514348093",
+    content: "(951) 530 -9660",
+    href: "tel:+19515309660",
   },
   {
     icon: MapPin,

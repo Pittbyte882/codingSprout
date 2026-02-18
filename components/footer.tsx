@@ -148,7 +148,7 @@ export function Footer() {
                 className="flex items-center gap-2 hover:text-primary transition-colors"
               >
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                (555) 123-4567
+                (951) 530-9660
               </a>
             </div>
           </div>
