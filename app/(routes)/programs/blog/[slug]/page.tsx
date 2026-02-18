@@ -80,7 +80,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               )}
             </div>
           </header>
-
+      {/* Featured Image/Video */}
+          {post.featured_image_url && (
+            <div className="mb-8">
+              {post.featured_image_url.match(/\.(mp4|webm|ogg)$/i) ? (
+                <video 
+                  src={post.featured_image_url} 
+                  controls 
+                  className="w-full rounded-2xl"
+                />
+              ) : (
+                <img
+                  src={post.featured_image_url}
+                  alt={post.title}
+                  className="w-full rounded-2xl object-cover max-h-[500px]"
+                />
+              )}
+            </div>
+          )}
           {/* Content */}
           <div className="prose prose-lg max-w-none">
             {paragraphs.map((paragraph, index) => {

@@ -37,6 +37,7 @@ export async function saveBlogPost(formData: FormData) {
     author_name: profile?.full_name || "Admin",
     is_published: isPublished,
     publish_date: isPublished ? new Date().toISOString() : null,
+    featured_image_url: formData.get("featuredImageUrl") as string || null,
     updated_at: new Date().toISOString(),
   }
 
