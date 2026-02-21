@@ -21,6 +21,7 @@ const footerLinks = {
     { label: "Sponsor a Student", href: "/sponsor" },
     { label: "FAQ", href: "/faq" },
     { label: "Privacy Policy", href: "/privacy" },
+    { label: "Website Quote", href: "/intake" },
   ],
 }
 
