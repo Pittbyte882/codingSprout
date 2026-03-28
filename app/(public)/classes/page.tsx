@@ -51,7 +51,7 @@ async function ClassesGridWrapper({ type, grade }: { type?: string; grade?: stri
     .from("classes")
     .select("*")
     .eq("is_published", true)
-    .gte("start_date", new Date().toISOString())
+    //.gte("start_date", new Date().toISOString()) 
     .order("start_date", { ascending: true })
 
   if (type === "online") {
