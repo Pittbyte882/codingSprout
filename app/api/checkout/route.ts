@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
         class_id: classId,
         student_id: studentId,
         user_id: user.id,
+        parent_id: user.id, 
         is_one_on_one: isOneOnOne,
         amount_paid: price,
         payment_method: "stripe",
