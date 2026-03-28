@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session
     
     // Check if this is a class registration or a sponsorship
-    const registrationId = session.metadata?.registrationId
+    const registrationId = session.metadata?.registration_id  
     const isSponsorship = session.metadata?.type === "sponsorship"
 
     if (isSponsorship) {

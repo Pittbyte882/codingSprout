@@ -51,7 +51,7 @@ export async function registerForClass(formData: FormData) {
   if (paymentMethod === "stripe") {
     // Create Stripe checkout session
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 
       // Create pending registration first to get ID
       const { data: registration, error: regError } = await supabase

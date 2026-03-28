@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || request.headers.get("origin")}/checkout/success?session_id={CHECKOUT_SESSION_ID}&registration_id=${registration.id}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || request.headers.get("origin")}/checkout/cancel?registration_id=${registration.id}`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || request.headers.get("origin")}/checkout/success?session_id={CHECKOUT_SESSION_ID}&registration_id=${registration.id}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || request.headers.get("origin")}/checkout/cancel?registration_id=${registration.id}`,
       customer_email: user.email,
       metadata: {
         registration_id: registration.id,

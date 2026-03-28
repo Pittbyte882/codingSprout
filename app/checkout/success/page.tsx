@@ -16,16 +16,9 @@ export default async function CheckoutSuccessPage({
   if (!params.registration_id) {
     redirect("/classes")
   }
-
-  // Update registration status if coming from Stripe
-  if (params.session_id) {
-    await supabase
-      .from("registrations")
-      .update({
-        payment_status: "paid",
-        status: "confirmed",
-      })
-      .eq("id", params.registration_id)
+ const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    redirect("/classes")
   }
 
   // Fetch registration details
@@ -37,6 +30,7 @@ export default async function CheckoutSuccessPage({
       student:students(*)
     `)
     .eq("id", params.registration_id)
+    .eq("user_id", user.id)
     .single()
 
   if (!registration) {
