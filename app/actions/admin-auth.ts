@@ -17,7 +17,6 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
   const passwordHash = await hashPassword(password)
   return passwordHash === hash
 }
-
 // Admin session token generation
 function generateSessionToken(): string {
   const array = new Uint8Array(32)
