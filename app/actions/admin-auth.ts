@@ -1,7 +1,7 @@
 "use server"
 
 import { cookies } from "next/headers"
-import { createServerSupabaseClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 import { redirect } from "next/navigation"
 
 // Simple hash function using Web Crypto API
@@ -34,7 +34,10 @@ export async function adminLogin(formData: FormData) {
     return { success: false, error: "Email and password are required" }
   }
 
-  const supabase = await createServerSupabaseClient()
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
 
   const { data: admin, error } = await supabase
     .from("admin_users")
@@ -123,7 +126,10 @@ export async function createAdminUser(
   fullName: string,
   role: "admin" | "instructor" | "super_admin" = "admin"
 ) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
   // Hash the password
   const passwordHash = await hashPassword(password)
