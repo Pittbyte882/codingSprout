@@ -103,7 +103,7 @@ async function handleClassRegistration(session: Stripe.Checkout.Session, registr
       .from("registrations")
       .update({
         payment_status: "paid",
-        status: "confirmed",
+       // status: "confirmed",
         stripe_payment_intent_id: session.payment_intent as string,
       })
       .eq("id", registrationId)
