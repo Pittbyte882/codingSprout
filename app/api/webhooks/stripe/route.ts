@@ -97,6 +97,7 @@ async function handleSponsorship(session: Stripe.Checkout.Session) {
 // ============================================
 async function handleClassRegistration(session: Stripe.Checkout.Session, registrationId: string) {
   try {
+    console.log("Handling registration:", registrationId)
     // Update registration status
     const { data: registration, error } = await supabaseAdmin
       .from("registrations")
@@ -115,6 +116,8 @@ async function handleClassRegistration(session: Stripe.Checkout.Session, registr
       `,
       )
       .single()
+      console.log("Update error:", JSON.stringify(error, null, 2))
+    console.log("Updated registration:", registration?.id)
 
     if (!error && registration) {
       const classData = registration.class
