@@ -23,28 +23,37 @@ export async function registerForClass(formData: FormData) {
   const isOneOnOne = formData.get("isOneOnOne") === "true"
   const amount = Number.parseFloat(formData.get("amount") as string)
 
-  // Check if class has spots
-  const { data: classItem } = await supabase.from("classes").select("*").eq("id", classId).single()
+ // Check if class has spots
+const { data: classItem, error: classError } = await supabase
+  .from("classes")
+  .select("*")
+  .eq("id", classId)
+  .single()
 
-  if (!classItem) {
-    return { success: false, error: "Class not found" }
-  }
+console.log("Class error:", JSON.stringify(classError, null, 2))
+console.log("Class data:", classItem?.name)
 
-  if (classItem.spots_taken >= classItem.max_spots) {
-    return { success: false, error: "Class is full" }
-  }
+if (!classItem) {
+  return { success: false, error: "Class not found" }
+}
 
-  // Check if already registered
-  const { data: existingReg } = await supabase
-    .from("registrations")
-    .select("id")
-    .eq("class_id", classId)
-    .eq("student_id", studentId)
-    .single()
+if (classItem.spots_taken >= classItem.max_spots) {
+  return { success: false, error: "Class is full" }
+}
 
-  if (existingReg) {
-    return { success: false, error: "Student is already registered for this class" }
-  }
+// Check if already registered
+const { data: existingReg, error: existingRegError } = await supabase
+  .from("registrations")
+  .select("id")
+  .eq("class_id", classId)
+  .eq("student_id", studentId)
+  .single()
+
+console.log("Existing reg error:", JSON.stringify(existingRegError, null, 2))
+
+if (existingReg) {
+  return { success: false, error: "Student is already registered for this class" }
+}
 
   const { data: student } = await supabase.from("students").select("first_name, last_name").eq("id", studentId).single()
 
@@ -64,12 +73,12 @@ export async function registerForClass(formData: FormData) {
             is_one_on_one: isOneOnOne,
             payment_method: "stripe",
             payment_status: "pending",
-            amount_paid: amount,
+            amount_paid_cents: Math.round(amount * 100),
           },
         ])
         .select()
         .single()
-
+        console.error("Reg error:", JSON.stringify(regError, null, 2))
       if (regError || !registration) {
         return { success: false, error: "Failed to create registration" }
       }
@@ -94,12 +103,12 @@ export async function registerForClass(formData: FormData) {
         cancel_url: `${baseUrl}/checkout/cancel?registration_id=${registration.id}`,
         customer_email: user.email || undefined,
         metadata: {
-          registrationId: registration.id,
-          classId,
-          studentId,
-          parentId: user.id,
-          isOneOnOne: String(isOneOnOne),
-        },
+        registration_id: registration.id,  // ✅
+        class_id: classId,
+        student_id: studentId,
+        parent_id: user.id,
+        is_one_on_one: String(isOneOnOne),
+      },
       })
 
       // Update registration with stripe session ID
@@ -125,7 +134,7 @@ export async function registerForClass(formData: FormData) {
         payment_status: "charter_pending",
         charter_school_name: charterSchoolName,
         charter_school_contact: charterSchoolContact,
-        amount_paid: amount,
+        amount_paid_cents: Math.round(amount * 100),
       },
     ])
 

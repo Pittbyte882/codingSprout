@@ -166,7 +166,7 @@ export async function updateRegistrationStatus(registrationId: string, status: s
           subject: `Payment Confirmed - ${classData?.name}`,
           html: getPaymentReceivedHtml({
             parentName: parent.full_name || "Parent",
-            amount: registration.amount_paid,
+            amount: registration.amount_paid_cents / 100,
             className: classData?.name || "Class",
             paymentMethod: "charter_school",
           }),
@@ -191,7 +191,7 @@ export async function updateRegistrationStatus(registrationId: string, status: s
             location: classData?.location,
             zoomLink: classData?.zoom_link,
             isOneOnOne: registration.is_one_on_one,
-            amountPaid: registration.amount_paid,
+            amountPaid: registration.amount_paid_cents / 100,
           }),
         })
       }

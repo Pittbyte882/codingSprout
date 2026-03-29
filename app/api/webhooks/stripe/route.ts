@@ -128,7 +128,7 @@ async function handleClassRegistration(session: Stripe.Checkout.Session, registr
           subject: `Payment Received - ${classData?.name}`,
           html: getPaymentReceivedHtml({
             parentName: parent.full_name || "Parent",
-            amount: registration.amount_paid,
+            amount: registration.amount_paid_cents / 100,
             className: classData?.name || "Class",
             paymentMethod: "stripe",
             transactionId: session.payment_intent as string,
@@ -154,7 +154,7 @@ async function handleClassRegistration(session: Stripe.Checkout.Session, registr
             location: classData?.location,
             zoomLink: classData?.zoom_link,
             isOneOnOne: registration.is_one_on_one,
-            amountPaid: registration.amount_paid,
+            amountPaid: registration.amount_paid_cents / 100,
           }),
         })
       }

@@ -32,7 +32,8 @@ export async function POST(request: NextRequest) {
       })
       .select()
       .single()
-
+      console.log("Registration error details:", JSON.stringify(regError, null, 2))
+      console.log("Registration data:", JSON.stringify(registration, null, 2))
     if (regError) {
       console.error("Registration error:", regError)
       return NextResponse.json({ error: "Failed to create registration" }, { status: 500 })
