@@ -41,7 +41,7 @@ export async function proxy(request: NextRequest) {
     // Check if user is admin
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-    if (profile?.role !== "admin") {
+    if (profile?.role !== "admin" && profile?.role !== "super_admin") {
       const url = request.nextUrl.clone()
       url.pathname = "/dashboard"
       return NextResponse.redirect(url)

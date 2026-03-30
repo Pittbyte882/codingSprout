@@ -17,7 +17,7 @@ export async function saveBlogPost(formData: FormData) {
   // Verify admin
   const { data: profile } = await supabase.from("profiles").select("role, full_name").eq("id", user.id).single()
 
-  if (profile?.role !== "admin" && profile?.role !== "instructor") {
+  if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
     return { success: false, error: "Not authorized" }
   }
 
@@ -75,7 +75,7 @@ export async function deleteBlogPost(postId: string) {
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-  if (profile?.role !== "admin" && profile?.role !== "instructor") {
+  if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
     return { success: false, error: "Not authorized" }
   }
 
