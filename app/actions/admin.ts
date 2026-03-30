@@ -18,9 +18,9 @@ export async function saveClass(formData: FormData) {
   // Verify admin
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-  if (profile?.role !== "admin" && profile?.role !== "instructor") {
-    return { success: false, error: "Not authorized" }
-  }
+ if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
+  return { success: false, error: "Not authorized" }
+}
 
   const id = formData.get("id") as string | null
   const data = {
@@ -76,9 +76,9 @@ export async function saveEvent(formData: FormData) {
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-  if (profile?.role !== "admin" && profile?.role !== "instructor") {
-    return { success: false, error: "Not authorized" }
-  }
+  if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
+  return { success: false, error: "Not authorized" }
+}
 
   const id = formData.get("id") as string | null
   const data = {
@@ -129,7 +129,7 @@ export async function updateRegistrationStatus(registrationId: string, status: s
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-  if (profile?.role !== "admin") {
+  if (profile?.role !== "admin" && profile?.role !== "super_admin") {
     return { success: false, error: "Not authorized" }
   }
 
@@ -218,7 +218,9 @@ export async function deleteGalleryItem(id: string) {
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-  if (profile?.role !== "admin") {
+  if (profile?.role !== "admin" && profile?.role !== "super_admin"
+  
+  ) {
     return { success: false, error: "Not authorized" }
   }
 
@@ -261,9 +263,9 @@ export async function deleteClass(classId: string) {
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-  if (profile?.role !== "admin" && profile?.role !== "instructor") {
-    return { success: false, error: "Not authorized" }
-  }
+ if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
+  return { success: false, error: "Not authorized" }
+}
 
   const { error } = await supabase.from("classes").delete().eq("id", classId)
 
