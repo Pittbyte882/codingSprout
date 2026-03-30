@@ -3,7 +3,7 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { sendEmail, getRegistrationConfirmationHtml, getPaymentReceivedHtml } from "@/lib/email"
-import { getAdminSession } from "@/lib/admin-auth"
+import { getAdminSession } from "@/app/actions/admin-auth"
 
 async function isAuthorized(): Promise<boolean> {
   // Check admin cookie session first
