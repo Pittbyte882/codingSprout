@@ -3,26 +3,28 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { sendEmail, getRegistrationConfirmationHtml, getPaymentReceivedHtml } from "@/lib/email"
+import { getAdminSession } from "@/lib/admin-auth"
+
+async function isAuthorized(): Promise<boolean> {
+  // Check admin cookie session first
+  const adminSession = await getAdminSession()
+  if (adminSession) return true
+
+  // Fall back to Supabase auth profile
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return false
+
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+  return profile?.role === "admin" || profile?.role === "instructor" || profile?.role === "super_admin"
+}
 
 export async function saveClass(formData: FormData) {
-  const supabase = await createServerSupabaseClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { success: false, error: "Not authenticated" }
+  if (!await isAuthorized()) {
+    return { success: false, error: "Not authorized" }
   }
 
-  // Verify admin
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-  console.log("User ID:", user.id)
-  console.log("Profile role:", profile?.role)
-
- if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
-  return { success: false, error: "Not authorized" }
-}
+  const supabase = await createServerSupabaseClient()
 
   const id = formData.get("id") as string | null
   const data = {
@@ -66,21 +68,11 @@ export async function saveClass(formData: FormData) {
 }
 
 export async function saveEvent(formData: FormData) {
-  const supabase = await createServerSupabaseClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { success: false, error: "Not authenticated" }
+  if (!await isAuthorized()) {
+    return { success: false, error: "Not authorized" }
   }
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-
-  if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
-  return { success: false, error: "Not authorized" }
-}
+  const supabase = await createServerSupabaseClient()
 
   const id = formData.get("id") as string | null
   const data = {
@@ -119,24 +111,13 @@ export async function saveEvent(formData: FormData) {
 }
 
 export async function updateRegistrationStatus(registrationId: string, status: string) {
-  const supabase = await createServerSupabaseClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { success: false, error: "Not authenticated" }
-  }
-
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-
-  if (profile?.role !== "admin" && profile?.role !== "super_admin") {
+  if (!await isAuthorized()) {
     return { success: false, error: "Not authorized" }
   }
 
+  const supabase = await createServerSupabaseClient()
+
   try {
-    // Update the registration status
     const { data: registration, error } = await supabase
       .from("registrations")
       .update({
@@ -155,14 +136,12 @@ export async function updateRegistrationStatus(registrationId: string, status: s
 
     if (error) throw error
 
-    // If charter approved, send confirmation emails
     if (status === "charter_approved" && registration) {
       const classData = registration.class
       const student = registration.student
       const parent = registration.parent
 
       if (parent?.email) {
-        // Send payment received email
         await sendEmail({
           to: parent.email,
           subject: `Payment Confirmed - ${classData?.name}`,
@@ -174,7 +153,6 @@ export async function updateRegistrationStatus(registrationId: string, status: s
           }),
         })
 
-        // Send registration confirmation email
         await sendEmail({
           to: parent.email,
           subject: `Class Registration Confirmed - ${classData?.name}`,
@@ -208,23 +186,11 @@ export async function updateRegistrationStatus(registrationId: string, status: s
 }
 
 export async function deleteGalleryItem(id: string) {
-  const supabase = await createServerSupabaseClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { success: false, error: "Not authenticated" }
-  }
-
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-
-  if (profile?.role !== "admin" && profile?.role !== "super_admin"
-  
-  ) {
+  if (!await isAuthorized()) {
     return { success: false, error: "Not authorized" }
   }
+
+  const supabase = await createServerSupabaseClient()
 
   const { error } = await supabase.from("gallery").delete().eq("id", id)
 
@@ -252,22 +218,13 @@ export async function markMessageAsRead(id: string) {
 
   return { success: true }
 }
+
 export async function deleteClass(classId: string) {
-  const supabase = await createServerSupabaseClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { success: false, error: "Not authenticated" }
+  if (!await isAuthorized()) {
+    return { success: false, error: "Not authorized" }
   }
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-
- if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
-  return { success: false, error: "Not authorized" }
-}
+  const supabase = await createServerSupabaseClient()
 
   const { error } = await supabase.from("classes").delete().eq("id", classId)
 
