@@ -17,6 +17,8 @@ export async function saveClass(formData: FormData) {
 
   // Verify admin
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+  console.log("User ID:", user.id)
+  console.log("Profile role:", profile?.role)
 
  if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
   return { success: false, error: "Not authorized" }
