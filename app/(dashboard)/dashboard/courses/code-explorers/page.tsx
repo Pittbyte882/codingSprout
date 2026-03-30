@@ -10,28 +10,27 @@ export const metadata = {
 export default async function CodeExplorersPage() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect("/login")
 
-  const { data: part1Registration } = await supabase
+  const { data: registrations } = await supabase
     .from("registrations")
     .select("*, class:classes(*)")
     .eq("parent_id", user.id)
     .eq("payment_status", "paid")
-    .ilike("classes.name", "%Code Explorers%")
-    .not("classes.name", "ilike", "%Part 2%")
-    .single()
+
+  const part1Registration = registrations?.find(
+    (r) =>
+      r.class?.name?.toLowerCase().includes("code explorers") &&
+      !r.class?.name?.toLowerCase().includes("part 2")
+  )
 
   if (!part1Registration) notFound()
 
-  const { data: part2Registration } = await supabase
-    .from("registrations")
-    .select("*, class:classes(*)")
-    .eq("parent_id", user.id)
-    .eq("payment_status", "paid")
-    .ilike("classes.name", "%Code Explorers%")
-    .ilike("classes.name", "%Part 2%")
-    .single()
+  const part2Registration = registrations?.find(
+    (r) =>
+      r.class?.name?.toLowerCase().includes("code explorers") &&
+      r.class?.name?.toLowerCase().includes("part 2")
+  )
 
   return <CodeExplorersClass isPart2Unlocked={!!part2Registration} />
 }
