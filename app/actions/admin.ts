@@ -1,30 +1,33 @@
 "use server"
 
 import { createServerSupabaseClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
 import { sendEmail, getRegistrationConfirmationHtml, getPaymentReceivedHtml } from "@/lib/email"
 import { getAdminSession } from "@/app/actions/admin-auth"
-
+const supabaseAdmin = () => createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 async function isAuthorized(): Promise<boolean> {
   // Check admin cookie session first
   const adminSession = await getAdminSession()
   if (adminSession) return true
 
   // Fall back to Supabase auth profile
-  const supabase = await createServerSupabaseClient()
+  const supabase = await createServerSupabaseClient()  // ✅ use this for auth
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return false
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
   return profile?.role === "admin" || profile?.role === "instructor" || profile?.role === "super_admin"
 }
-
 export async function saveClass(formData: FormData) {
   if (!await isAuthorized()) {
     return { success: false, error: "Not authorized" }
   }
 
-  const supabase = await createServerSupabaseClient()
+  const supabase = supabaseAdmin()
 
   const id = formData.get("id") as string | null
   const data = {
@@ -72,7 +75,7 @@ export async function saveEvent(formData: FormData) {
     return { success: false, error: "Not authorized" }
   }
 
-  const supabase = await createServerSupabaseClient()
+  const supabase = supabaseAdmin()
 
   const id = formData.get("id") as string | null
   const data = {
@@ -115,7 +118,7 @@ export async function updateRegistrationStatus(registrationId: string, status: s
     return { success: false, error: "Not authorized" }
   }
 
-  const supabase = await createServerSupabaseClient()
+  const supabase = supabaseAdmin()
 
   try {
     const { data: registration, error } = await supabase
@@ -190,7 +193,7 @@ export async function deleteGalleryItem(id: string) {
     return { success: false, error: "Not authorized" }
   }
 
-  const supabase = await createServerSupabaseClient()
+  const supabase = supabaseAdmin()
 
   const { error } = await supabase.from("gallery").delete().eq("id", id)
 
@@ -206,7 +209,7 @@ export async function deleteGalleryItem(id: string) {
 }
 
 export async function markMessageAsRead(id: string) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = supabaseAdmin()
 
   const { error } = await supabase.from("contact_submissions").update({ is_read: true }).eq("id", id)
 
@@ -224,7 +227,7 @@ export async function deleteClass(classId: string) {
     return { success: false, error: "Not authorized" }
   }
 
-  const supabase = await createServerSupabaseClient()
+  const supabase = supabaseAdmin()
 
   const { error } = await supabase.from("classes").delete().eq("id", classId)
 
