@@ -82,7 +82,10 @@ export interface Class {
   is_published: boolean
   created_at: string
   updated_at: string
+  zoom_meeting_id: string | null
+  zoom_is_live: boolean
 }
+
 
 export interface Registration {
   id: string

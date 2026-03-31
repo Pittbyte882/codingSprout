@@ -47,6 +47,7 @@ export async function saveClass(formData: FormData) {
     is_published: formData.get("isPublished") === "true",
     zoom_link: (formData.get("zoomLink") as string) || null,
     location: (formData.get("location") as string) || null,
+    zoom_is_live: formData.get("zoomIsLive") === "true",
   }
 
   let error

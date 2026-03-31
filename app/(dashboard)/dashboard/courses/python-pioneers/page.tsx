@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation"
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { PythonPioneersClass } from "@/components/classes/python-pioneers"
+import { ZoomMeeting } from "@/components/zoom/zoom-meeting"
 
 export const metadata = {
   title: "Python Pioneers | Coding Sprout",
@@ -11,6 +12,12 @@ export default async function PythonPioneersPage() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", user.id)
+    .single()
 
   const { data: registrations } = await supabase
     .from("registrations")
@@ -32,5 +39,23 @@ export default async function PythonPioneersPage() {
       r.class?.name?.toLowerCase().includes("part 2")
   )
 
-  return <PythonPioneersClass isPart2Unlocked={!!part2Registration} />
+  const classData = part1Registration.class
+  const isLive = classData?.zoom_is_live && classData?.zoom_meeting_id
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <div className={`overflow-y-auto ${isLive ? "w-1/2" : "w-full"}`}>
+        <PythonPioneersClass isPart2Unlocked={!!part2Registration} />
+      </div>
+      {isLive && (
+        <div className="w-1/2 border-l p-4 bg-background">
+          <ZoomMeeting
+            meetingNumber={classData.zoom_meeting_id}
+            userName={profile?.full_name || "Student"}
+            userEmail={profile?.email || user.email || ""}
+          />
+        </div>
+      )}
+    </div>
+  )
 }

@@ -24,7 +24,7 @@ export function ClassForm({ classItem }: ClassFormProps) {
   const [isIndividual, setIsIndividual] = useState(classItem?.is_individual ?? false)
   const [isPublished, setIsPublished] = useState(classItem?.is_published ?? false)
   const [selectedGrades, setSelectedGrades] = useState<string[]>(classItem?.grade_levels || [])
-
+  const [zoomIsLive, setZoomIsLive] = useState(classItem?.zoom_is_live ?? false)
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true)
 
@@ -36,7 +36,7 @@ export function ClassForm({ classItem }: ClassFormProps) {
     if (classItem?.id) {
       formData.append("id", classItem.id)
     }
-
+    formData.append("zoomIsLive", String(zoomIsLive))
     try {
       const result = await saveClass(formData)
       if (result.success) {
@@ -210,6 +210,23 @@ export function ClassForm({ classItem }: ClassFormProps) {
           </div>
         )}
       </div>
+
+      {/* zoom is live toggle*/}
+      {isOnline && (
+        <div className="flex items-center justify-between rounded-lg border p-4 border-primary/20 bg-primary/5">
+          <div>
+            <Label htmlFor="zoomIsLive">Class is Live Now</Label>
+            <p className="text-sm text-muted-foreground">
+              Toggle ON when your Zoom session starts
+            </p>
+          </div>
+          <Switch
+            id="zoomIsLive"
+            checked={zoomIsLive}
+            onCheckedChange={setZoomIsLive}
+          />
+        </div>
+      )}
 
       <div className="flex items-center justify-between rounded-lg border p-4">
         <div>
