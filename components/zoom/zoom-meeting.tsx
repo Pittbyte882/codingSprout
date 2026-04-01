@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Video, VideoOff, Loader2 } from "lucide-react"
 
@@ -15,9 +15,11 @@ export function ZoomMeeting({
   userName,
   userEmail,
 }: ZoomMeetingProps) {
-  const [isJoined, setIsJoined] = useState(false)
+  const meetingContainerRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isJoined, setIsJoined] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const zoomClientRef = useRef<any>(null)
 
   const joinMeeting = async () => {
     setIsLoading(true)
@@ -42,10 +44,71 @@ export function ZoomMeeting({
         throw new Error(data.error || "Failed to get signature")
       }
 
-      // Use Zoom's web client URL instead of SDK
-      // This opens Zoom in an iframe without taking over the page
-      setIsJoined(true)
-      setIsLoading(false)
+      const { sdkKey, zakToken } = data
+
+      // Import Zoom Component View SDK
+      console.log("Step 4: Loading Zoom SDK...")
+      const { ZoomMtg } = await import("@zoom/meetingsdk")
+
+      // Use Component View - embeds in a div instead of taking over page
+      ZoomMtg.setZoomJSLib("https://source.zoom.us/3.1.2/lib", "/av")
+      ZoomMtg.preLoadWasm()
+      ZoomMtg.prepareWebSDK()
+
+      console.log("Step 5: Initializing...")
+
+      ZoomMtg.init({
+        leaveUrl: window.location.href,
+        patchJsMedia: true,
+        leaveOnPageUnload: true,
+        meetingInfo: [
+          "topic",
+          "host",
+          "participant",
+          "dc",
+          "enctype",
+        ],
+        success: () => {
+          console.log("Step 6: Joining meeting...")
+          ZoomMtg.join({
+            meetingNumber,
+            userName,
+            signature: zakToken,
+            sdkKey,
+            userEmail,
+            passWord: "",
+            zak: zakToken,
+            success: () => {
+              console.log("Joined successfully!")
+              setIsJoined(true)
+              setIsLoading(false)
+            },
+            error: (err: any) => {
+              console.error("Join error:", err)
+              setError(`Failed to join: ${JSON.stringify(err)}`)
+              setIsLoading(false)
+            },
+          })
+        },
+        error: (err: any) => {
+          console.error("Init error:", err)
+          setError(`Failed to initialize: ${JSON.stringify(err)}`)
+          setIsLoading(false)
+        },
+      })
+
+      // Move Zoom's root element into our container
+      setTimeout(() => {
+        const zoomRoot = document.getElementById("zmmtg-root")
+        if (zoomRoot && meetingContainerRef.current) {
+          meetingContainerRef.current.appendChild(zoomRoot)
+          zoomRoot.style.display = "block"
+          zoomRoot.style.position = "relative"
+          zoomRoot.style.width = "100%"
+          zoomRoot.style.height = "100%"
+        }
+      }, 1000)
+
     } catch (err) {
       console.error("Zoom error:", err)
       setError("Something went wrong. Please try again.")
@@ -53,12 +116,15 @@ export function ZoomMeeting({
     }
   }
 
-  const leaveMeeting = () => {
+  const leaveMeeting = async () => {
+    try {
+      const { ZoomMtg } = await import("@zoom/meetingsdk")
+      ZoomMtg.leaveMeeting({})
+    } catch (e) {
+      console.error(e)
+    }
     setIsJoined(false)
   }
-
-  // Build the Zoom web client URL
-  const zoomWebUrl = `https://zoom.us/wc/${meetingNumber}/join?prefer=1&un=${encodeURIComponent(btoa(userName))}`
 
   return (
     <div className="flex flex-col h-full">
@@ -75,7 +141,7 @@ export function ZoomMeeting({
           </div>
 
           {error && (
-            <div className="text-sm text-destructive bg-destructive/10 px-4 py-2 rounded-lg">
+            <div className="text-sm text-destructive bg-destructive/10 px-4 py-2 rounded-lg text-center">
               {error}
             </div>
           )}
@@ -100,14 +166,11 @@ export function ZoomMeeting({
         </div>
       ) : (
         <div className="flex flex-col h-full">
-          <div className="flex-1 rounded-xl overflow-hidden border">
-            <iframe
-              src={zoomWebUrl}
-              allow="camera; microphone; fullscreen; display-capture"
-              className="w-full h-full"
-              style={{ minHeight: "500px" }}
-            />
-          </div>
+          <div
+            ref={meetingContainerRef}
+            className="flex-1 rounded-xl overflow-hidden border bg-black"
+            style={{ minHeight: "400px" }}
+          />
           <Button
             onClick={leaveMeeting}
             variant="destructive"
