@@ -18,6 +18,14 @@ const nextConfig = {
         source: "/(.*)",
         headers: [
           {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
+          },
+          {
+            key: "Cross-Origin-Embedder-Policy",
+            value: "require-corp",
+          },
+          {
             key: "X-Content-Type-Options",
             value: "nosniff",
           },
@@ -29,10 +37,10 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.zoom.us https://source.zoom.us https://*.zoomdev.us",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.zoom.us https://source.zoom.us",
               "style-src 'self' 'unsafe-inline' https://*.zoom.us https://source.zoom.us",
-              "connect-src 'self' https://*.zoom.us wss://*.zoom.us https://*.supabase.co wss://*.supabase.co https://api.zoom.us https://zoom.us https://*.zoomdev.us https://*.cloudfront.net",
-              "frame-src 'self' https://*.zoom.us https://*.zoomdev.us https://zoom.us",
+              "connect-src 'self' https://*.zoom.us wss://*.zoom.us https://*.supabase.co wss://*.supabase.co https://api.zoom.us https://zoom.us https://*.cloudfront.net",
+              "frame-src 'self' https://*.zoom.us https://zoom.us",
               "media-src 'self' https://*.zoom.us blob: mediastream:",
               "img-src 'self' data: blob: https://*.zoom.us https://images.unsplash.com https://source.zoom.us",
               "worker-src 'self' blob:",

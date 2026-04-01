@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Video, VideoOff, Loader2 } from "lucide-react"
 
@@ -10,40 +11,25 @@ interface ZoomMeetingProps {
   userEmail: string
 }
 
-export function ZoomMeeting({
+function ZoomMeetingInner({
   meetingNumber,
   userName,
   userEmail,
 }: ZoomMeetingProps) {
   const meetingContainerRef = useRef<HTMLDivElement>(null)
+  const clientRef = useRef<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isJoined, setIsJoined] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Inject Zoom CSS
-  useEffect(() => {
-    const link = document.createElement("link")
-    link.rel = "stylesheet"
-    link.href = "https://source.zoom.us/3.1.2/css/bootstrap.css"
-    document.head.appendChild(link)
-
-    const link2 = document.createElement("link")
-    link2.rel = "stylesheet"
-    link2.href = "https://source.zoom.us/3.1.2/css/react-select.css"
-    document.head.appendChild(link2)
-
-    return () => {
-      document.head.removeChild(link)
-      document.head.removeChild(link2)
-    }
-  }, [])
-
   const joinMeeting = async () => {
+    if (!meetingContainerRef.current) return
+
     setIsLoading(true)
     setError(null)
 
     try {
-      // Get ZAK token from our API
+      // Get signature from API
       const response = await fetch("/api/zoom/signature", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,73 +39,59 @@ export function ZoomMeeting({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to get token")
+        throw new Error(data.error || "Failed to get signature")
       }
 
-      const { sdkKey, zakToken } = data
+      const { signature, sdkKey } = data
 
-      // Import Zoom SDK
-      const { ZoomMtg } = await import("@zoom/meetingsdk")
+      // Import the EMBEDDED version — this is the key difference
+      const { ZoomMtgEmbedded } = await import("@zoom/meetingsdk/embedded")
 
-      // Set up Zoom JS lib
-      ZoomMtg.setZoomJSLib("https://source.zoom.us/3.1.2/lib", "/av")
-      ZoomMtg.preLoadWasm()
-      ZoomMtg.prepareWebSDK()
+      // Create client
+      const client = ZoomMtgEmbedded.createClient()
+      clientRef.current = client
 
-      // Initialize in component view mode
-      ZoomMtg.init({
-        leaveUrl: window.location.href,
-        patchJsMedia: true,
-        leaveOnPageUnload: true,
-        // Component view — renders inside a container div
-        success: () => {
-          ZoomMtg.join({
-            meetingNumber,
-            userName,
-            signature: zakToken,
-            sdkKey,
-            userEmail,
-            passWord: "",
-            zak: zakToken,
-            success: () => {
-              setIsJoined(true)
-              setIsLoading(false)
-
-              // Move zoom root into our container
-              const zoomRoot = document.getElementById("zmmtg-root")
-              if (zoomRoot && meetingContainerRef.current) {
-                // Style it to fit in our container
-                zoomRoot.style.position = "relative"
-                zoomRoot.style.width = "100%"
-                zoomRoot.style.height = "100%"
-                zoomRoot.style.display = "block"
-                meetingContainerRef.current.appendChild(zoomRoot)
-              }
+      // Initialize with our container div
+      await client.init({
+        zoomAppRoot: meetingContainerRef.current,
+        language: "en-US",
+        customize: {
+          video: {
+            isResizable: true,
+            viewSizes: {
+              default: {
+                width: 600,
+                height: 400,
+              },
             },
-            error: (err: any) => {
-              console.error("Join error:", err)
-              setError(`Failed to join meeting: ${err.reason || JSON.stringify(err)}`)
-              setIsLoading(false)
-            },
-          })
-        },
-        error: (err: any) => {
-          console.error("Init error:", err)
-          setError(`Failed to initialize: ${err.reason || JSON.stringify(err)}`)
-          setIsLoading(false)
+          },
         },
       })
+
+      // Join the meeting
+      await client.join({
+        meetingNumber,
+        userName,
+        signature,
+        sdkKey,
+        userEmail,
+        password: "",
+      })
+
+      setIsJoined(true)
+      setIsLoading(false)
     } catch (err: any) {
       console.error("Zoom error:", err)
-      setError(err.message || "Something went wrong. Please try again.")
+      setError(err.message || "Failed to join. Please try again.")
       setIsLoading(false)
     }
   }
 
   const leaveMeeting = async () => {
     try {
-      const { ZoomMtg } = await import("@zoom/meetingsdk")
-      ZoomMtg.leaveMeeting({})
+      if (clientRef.current) {
+        await clientRef.current.leaveMeeting()
+      }
     } catch (e) {
       console.error(e)
     }
@@ -166,10 +138,11 @@ export function ZoomMeeting({
         </div>
       ) : (
         <div className="flex flex-col h-full">
+          {/* This div is where Zoom embeds */}
           <div
             ref={meetingContainerRef}
-            className="flex-1 rounded-xl overflow-hidden border bg-black"
-            style={{ minHeight: "500px", position: "relative" }}
+            className="flex-1 rounded-xl overflow-hidden"
+            style={{ minHeight: "500px" }}
           />
           <Button
             onClick={leaveMeeting}
@@ -182,6 +155,20 @@ export function ZoomMeeting({
           </Button>
         </div>
       )}
+
+      {/* Container must exist in DOM even before joining */}
+      {!isJoined && (
+        <div
+          ref={meetingContainerRef}
+          style={{ display: "none" }}
+        />
+      )}
     </div>
   )
 }
+
+// Export with SSR disabled — critical for Zoom SDK to work in Next.js
+export const ZoomMeeting = dynamic(
+  () => Promise.resolve(ZoomMeetingInner),
+  { ssr: false }
+)

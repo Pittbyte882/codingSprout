@@ -14,6 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script src="/coi-serviceworker.js" />
+      </head>
       <body>
         {children}
         <Toaster 
