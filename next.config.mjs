@@ -33,6 +33,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://*.zoom.us https://source.zoom.us",
               "connect-src 'self' https://*.zoom.us wss://*.zoom.us https://*.supabase.co wss://*.supabase.co https://api.zoom.us https://zoom.us https://*.zoomdev.us",
               "frame-src 'self' https://*.zoom.us https://*.zoomdev.us",
+              "frame-src 'self' https://*.zoom.us https://zoom.us",
               "media-src 'self' https://*.zoom.us blob: mediastream:",
               "img-src 'self' data: blob: https://*.zoom.us https://images.unsplash.com https://source.zoom.us",
               "worker-src 'self' blob:",

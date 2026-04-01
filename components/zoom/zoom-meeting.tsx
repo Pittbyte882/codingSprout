@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Video, VideoOff, Loader2 } from "lucide-react"
 
@@ -15,68 +15,37 @@ export function ZoomMeeting({
   userName,
   userEmail,
 }: ZoomMeetingProps) {
-  const zoomContainerRef = useRef<HTMLDivElement>(null)
-  const [isLoading, setIsLoading] = useState(false)
   const [isJoined, setIsJoined] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const clientRef = useRef<any>(null)
 
   const joinMeeting = async () => {
     setIsLoading(true)
     setError(null)
 
     try {
-      // Get signature from our API
+      console.log("Step 1: Fetching signature...")
       const response = await fetch("/api/zoom/signature", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           meetingNumber,
-          role: 0, // 0 = attendee, 1 = host
+          role: 0,
         }),
       })
 
-      const { signature, sdkKey, zakToken } = await response.json()
+      console.log("Step 2: Response status:", response.status)
+      const data = await response.json()
+      console.log("Step 3: Response data:", data)
 
-      // Dynamically import Zoom SDK (client-side only)
-      const { ZoomMtg } = await import("@zoom/meetingsdk")
-
-      ZoomMtg.setZoomJSLib("https://source.zoom.us/3.1.2/lib", "/av")
-      ZoomMtg.preLoadWasm()
-      ZoomMtg.prepareWebSDK()
-
-      if (zoomContainerRef.current) {
-        ZoomMtg.init({
-          leaveUrl: window.location.href,
-          patchJsMedia: true,
-          leaveOnPageUnload: true,
-          success: () => {
-            ZoomMtg.join({
-              meetingNumber,
-              userName,
-              signature: zakToken,
-              sdkKey,
-              userEmail,
-              passWord: "",
-              zak: zakToken,
-              success: () => {
-                setIsJoined(true)
-                setIsLoading(false)
-              },
-              error: (err: any) => {
-                console.error("Join error:", err)
-                setError("Failed to join meeting. Please try again.")
-                setIsLoading(false)
-              },
-            })
-          },
-          error: (err: any) => {
-            console.error("Init error:", err)
-            setError("Failed to initialize video. Please try again.")
-            setIsLoading(false)
-          },
-        })
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to get signature")
       }
+
+      // Use Zoom's web client URL instead of SDK
+      // This opens Zoom in an iframe without taking over the page
+      setIsJoined(true)
+      setIsLoading(false)
     } catch (err) {
       console.error("Zoom error:", err)
       setError("Something went wrong. Please try again.")
@@ -84,13 +53,12 @@ export function ZoomMeeting({
     }
   }
 
-  const leaveMeeting = async () => {
-    if (clientRef.current) {
-      const { ZoomMtg } = await import("@zoom/meetingsdk")
-      ZoomMtg.leaveMeeting({})
-    }
+  const leaveMeeting = () => {
     setIsJoined(false)
   }
+
+  // Build the Zoom web client URL
+  const zoomWebUrl = `https://zoom.us/wc/${meetingNumber}/join?prefer=1&un=${encodeURIComponent(btoa(userName))}`
 
   return (
     <div className="flex flex-col h-full">
@@ -132,11 +100,14 @@ export function ZoomMeeting({
         </div>
       ) : (
         <div className="flex flex-col h-full">
-          <div
-            ref={zoomContainerRef}
-            id="zmmtg-root"
-            className="flex-1 rounded-xl overflow-hidden"
-          />
+          <div className="flex-1 rounded-xl overflow-hidden border">
+            <iframe
+              src={zoomWebUrl}
+              allow="camera; microphone; fullscreen; display-capture"
+              className="w-full h-full"
+              style={{ minHeight: "500px" }}
+            />
+          </div>
           <Button
             onClick={leaveMeeting}
             variant="destructive"
