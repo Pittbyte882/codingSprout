@@ -3,6 +3,9 @@ import { createServerSupabaseClient } from "@/lib/supabase/server"
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("ZOOM_SDK_KEY:", process.env.ZOOM_SDK_KEY ? "exists" : "MISSING")
+    console.log("ZOOM_SDK_SECRET:", process.env.ZOOM_SDK_SECRET ? "exists" : "MISSING")
+    console.log("ZOOM_ACCOUNT_ID:", process.env.ZOOM_ACCOUNT_ID ? "exists" : "MISSING")
     // Verify user is authenticated
     const supabase = await createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
