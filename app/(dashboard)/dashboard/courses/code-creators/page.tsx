@@ -40,7 +40,7 @@ export default async function CodeCreatorsPage() {
   )
 
   const classData = part1Registration.class
-  const isLive = classData?.zoom_is_live && classData?.zoom_meeting_id
+  const isLive = classData?.zoom_is_live && classData?.zoom_link
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -50,9 +50,8 @@ export default async function CodeCreatorsPage() {
       {isLive && (
         <div className="w-1/2 border-l p-4 bg-background">
           <ZoomMeeting
-            meetingNumber={classData.zoom_meeting_id}
+            roomUrl={classData.zoom_link}
             userName={profile?.full_name || "Student"}
-            userEmail={profile?.email || user.email || ""}
           />
         </div>
       )}
