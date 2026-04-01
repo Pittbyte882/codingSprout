@@ -138,16 +138,7 @@ export default async function EnrollmentsPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {reg.class?.is_online &&
-                        reg.class?.zoom_link &&
-                        paid && (
-                          <a href={reg.class.zoom_link} target="_blank" rel="noopener noreferrer">
-                            <Button size="sm" className="bg-sky-blue hover:bg-sky-blue/90 text-secondary">
-                              <ExternalLink className="mr-2 h-4 w-4" />
-                              Join Zoom
-                            </Button>
-                          </a>
-                        )}
+                     
 
                       {courseUrl && paid && (
                         <Link href={courseUrl}>

@@ -19,57 +19,60 @@ export function ZoomMeeting({
   const [isLoading, setIsLoading] = useState(false)
   const [isJoined, setIsJoined] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const zoomClientRef = useRef<any>(null)
+
+  // Inject Zoom CSS
+  useEffect(() => {
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "https://source.zoom.us/3.1.2/css/bootstrap.css"
+    document.head.appendChild(link)
+
+    const link2 = document.createElement("link")
+    link2.rel = "stylesheet"
+    link2.href = "https://source.zoom.us/3.1.2/css/react-select.css"
+    document.head.appendChild(link2)
+
+    return () => {
+      document.head.removeChild(link)
+      document.head.removeChild(link2)
+    }
+  }, [])
 
   const joinMeeting = async () => {
     setIsLoading(true)
     setError(null)
 
     try {
-      console.log("Step 1: Fetching signature...")
+      // Get ZAK token from our API
       const response = await fetch("/api/zoom/signature", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          meetingNumber,
-          role: 0,
-        }),
+        body: JSON.stringify({ meetingNumber, role: 0 }),
       })
 
-      console.log("Step 2: Response status:", response.status)
       const data = await response.json()
-      console.log("Step 3: Response data:", data)
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to get signature")
+        throw new Error(data.error || "Failed to get token")
       }
 
       const { sdkKey, zakToken } = data
 
-      // Import Zoom Component View SDK
-      console.log("Step 4: Loading Zoom SDK...")
+      // Import Zoom SDK
       const { ZoomMtg } = await import("@zoom/meetingsdk")
 
-      // Use Component View - embeds in a div instead of taking over page
+      // Set up Zoom JS lib
       ZoomMtg.setZoomJSLib("https://source.zoom.us/3.1.2/lib", "/av")
       ZoomMtg.preLoadWasm()
       ZoomMtg.prepareWebSDK()
 
-      console.log("Step 5: Initializing...")
-
+      // Initialize in component view mode
       ZoomMtg.init({
         leaveUrl: window.location.href,
         patchJsMedia: true,
         leaveOnPageUnload: true,
-        meetingInfo: [
-          "topic",
-          "host",
-          "participant",
-          "dc",
-          "enctype",
-        ],
+        // Component view — renders inside a container div
         success: () => {
-          console.log("Step 6: Joining meeting...")
           ZoomMtg.join({
             meetingNumber,
             userName,
@@ -79,39 +82,36 @@ export function ZoomMeeting({
             passWord: "",
             zak: zakToken,
             success: () => {
-              console.log("Joined successfully!")
               setIsJoined(true)
               setIsLoading(false)
+
+              // Move zoom root into our container
+              const zoomRoot = document.getElementById("zmmtg-root")
+              if (zoomRoot && meetingContainerRef.current) {
+                // Style it to fit in our container
+                zoomRoot.style.position = "relative"
+                zoomRoot.style.width = "100%"
+                zoomRoot.style.height = "100%"
+                zoomRoot.style.display = "block"
+                meetingContainerRef.current.appendChild(zoomRoot)
+              }
             },
             error: (err: any) => {
               console.error("Join error:", err)
-              setError(`Failed to join: ${JSON.stringify(err)}`)
+              setError(`Failed to join meeting: ${err.reason || JSON.stringify(err)}`)
               setIsLoading(false)
             },
           })
         },
         error: (err: any) => {
           console.error("Init error:", err)
-          setError(`Failed to initialize: ${JSON.stringify(err)}`)
+          setError(`Failed to initialize: ${err.reason || JSON.stringify(err)}`)
           setIsLoading(false)
         },
       })
-
-      // Move Zoom's root element into our container
-      setTimeout(() => {
-        const zoomRoot = document.getElementById("zmmtg-root")
-        if (zoomRoot && meetingContainerRef.current) {
-          meetingContainerRef.current.appendChild(zoomRoot)
-          zoomRoot.style.display = "block"
-          zoomRoot.style.position = "relative"
-          zoomRoot.style.width = "100%"
-          zoomRoot.style.height = "100%"
-        }
-      }, 1000)
-
-    } catch (err) {
+    } catch (err: any) {
       console.error("Zoom error:", err)
-      setError("Something went wrong. Please try again.")
+      setError(err.message || "Something went wrong. Please try again.")
       setIsLoading(false)
     }
   }
@@ -169,7 +169,7 @@ export function ZoomMeeting({
           <div
             ref={meetingContainerRef}
             className="flex-1 rounded-xl overflow-hidden border bg-black"
-            style={{ minHeight: "400px" }}
+            style={{ minHeight: "500px", position: "relative" }}
           />
           <Button
             onClick={leaveMeeting}
