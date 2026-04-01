@@ -36,7 +36,7 @@ export function ZoomMeeting({
         }),
       })
 
-      const { signature, sdkKey } = await response.json()
+      const { signature, sdkKey, zakToken } = await response.json()
 
       // Dynamically import Zoom SDK (client-side only)
       const { ZoomMtg } = await import("@zoom/meetingsdk")
@@ -54,10 +54,11 @@ export function ZoomMeeting({
             ZoomMtg.join({
               meetingNumber,
               userName,
-              signature,
+              signature: zakToken,
               sdkKey,
               userEmail,
               passWord: "",
+              zak: zakToken,
               success: () => {
                 setIsJoined(true)
                 setIsLoading(false)
