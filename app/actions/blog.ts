@@ -1,25 +1,53 @@
 "use server"
 
 import { createServerSupabaseClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
+import { getAdminSession } from "@/app/actions/admin-auth"
+
+// Service role client — bypasses RLS
+const supabaseAdmin = () => createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+async function isAuthorized(): Promise<boolean> {
+  // Check admin cookie session first
+  const adminSession = await getAdminSession()
+  if (adminSession) return true
+
+  // Fall back to Supabase auth profile
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return false
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single()
+
+  return (
+    profile?.role === "admin" ||
+    profile?.role === "instructor" ||
+    profile?.role === "super_admin"
+  )
+}
 
 export async function saveBlogPost(formData: FormData) {
-  const supabase = await createServerSupabaseClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { success: false, error: "Not authenticated" }
-  }
-
-  // Verify admin
-  const { data: profile } = await supabase.from("profiles").select("role, full_name").eq("id", user.id).single()
-
-  if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
+  if (!await isAuthorized()) {
     return { success: false, error: "Not authorized" }
   }
+
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", user!.id)
+    .single()
+
+  const admin = supabaseAdmin()
 
   const id = formData.get("id") as string | null
   const title = formData.get("title") as string
@@ -27,27 +55,29 @@ export async function saveBlogPost(formData: FormData) {
   const excerpt = formData.get("excerpt") as string
   const content = formData.get("content") as string
   const isPublished = formData.get("isPublished") === "true"
+  const category = (formData.get("category") as string) || null
 
   const data = {
-  title,
-  slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
-  excerpt,
-  content,
-  category: (formData.get("category") as string) || null, // ✅ add this
-  author_id: user.id,
-  author_name: profile?.full_name || "Admin",
-  is_published: isPublished,
-  publish_date: isPublished ? new Date().toISOString() : null,
-  featured_image_url: formData.get("featuredImageUrl") as string || null,
-  updated_at: new Date().toISOString(),
-}
+    title,
+    slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+    excerpt,
+    content,
+    category,
+    author_id: user!.id,
+    author_name: profile?.full_name || "Admin",
+    is_published: isPublished,
+    publish_date: isPublished ? new Date().toISOString() : null,
+    featured_image_url: (formData.get("featuredImageUrl") as string) || null,
+    updated_at: new Date().toISOString(),
+  }
+
   let error
 
   if (id) {
-    const result = await supabase.from("blog_posts").update(data).eq("id", id)
+    const result = await admin.from("blog_posts").update(data).eq("id", id)
     error = result.error
   } else {
-    const result = await supabase.from("blog_posts").insert([data])
+    const result = await admin.from("blog_posts").insert([data])
     error = result.error
   }
 
@@ -63,23 +93,12 @@ export async function saveBlogPost(formData: FormData) {
 }
 
 export async function deleteBlogPost(postId: string) {
-  const supabase = await createServerSupabaseClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { success: false, error: "Not authenticated" }
-  }
-
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-
-  if (profile?.role !== "admin" && profile?.role !== "instructor" && profile?.role !== "super_admin") {
+  if (!await isAuthorized()) {
     return { success: false, error: "Not authorized" }
   }
 
-  const { error } = await supabase.from("blog_posts").delete().eq("id", postId)
+  const admin = supabaseAdmin()
+  const { error } = await admin.from("blog_posts").delete().eq("id", postId)
 
   if (error) {
     console.error("Delete blog post error:", error)
