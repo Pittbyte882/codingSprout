@@ -29,18 +29,18 @@ export async function saveBlogPost(formData: FormData) {
   const isPublished = formData.get("isPublished") === "true"
 
   const data = {
-    title,
-    slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
-    excerpt,
-    content,
-    author_id: user.id,
-    author_name: profile?.full_name || "Admin",
-    is_published: isPublished,
-    publish_date: isPublished ? new Date().toISOString() : null,
-    featured_image_url: formData.get("featuredImageUrl") as string || null,
-    updated_at: new Date().toISOString(),
-  }
-
+  title,
+  slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+  excerpt,
+  content,
+  category: (formData.get("category") as string) || null, // ✅ add this
+  author_id: user.id,
+  author_name: profile?.full_name || "Admin",
+  is_published: isPublished,
+  publish_date: isPublished ? new Date().toISOString() : null,
+  featured_image_url: formData.get("featuredImageUrl") as string || null,
+  updated_at: new Date().toISOString(),
+}
   let error
 
   if (id) {

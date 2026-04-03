@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { createServerSupabaseClient } from "@/lib/supabase/server"
+import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Calendar, User } from "lucide-react"
 
 interface BlogPostPageProps {
@@ -46,8 +47,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     })
   }
 
-  // Split content into paragraphs
-  const paragraphs = post.content.split("\n").filter((p) => p.trim().length > 0)
+  
 
   return (
     <div>
@@ -66,20 +66,27 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="mx-auto max-w-4xl px-4 lg:px-8">
           {/* Header */}
           <header className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight text-deep-navy sm:text-5xl mb-4">{post.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                {formatDate(post.publish_date || post.created_at)}
-              </span>
-              {post.author_name && (
-                <span className="flex items-center gap-1">
-                  <User className="h-4 w-4" />
-                  {post.author_name}
-                </span>
+              {post.category && (
+                <Link href={`/blog?category=${encodeURIComponent(post.category)}`}>
+                  <Badge variant="outline" className="text-sprout-green border-sprout-green mb-4 w-fit inline-block">
+                    {post.category}
+                  </Badge>
+                </Link>
               )}
-            </div>
-          </header>
+              <h1 className="text-4xl font-bold tracking-tight text-deep-navy sm:text-5xl mb-4">{post.title}</h1>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  {formatDate(post.publish_date || post.created_at)}
+                </span>
+                {post.author_name && (
+                  <span className="flex items-center gap-1">
+                    <User className="h-4 w-4" />
+                    {post.author_name}
+                  </span>
+                )}
+              </div>
+            </header>
       {/* Featured Image/Video */}
           {post.featured_image_url && (
             <div className="mb-8">
@@ -98,32 +105,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               )}
             </div>
           )}
-          {/* Content */}
-          <div className="prose prose-lg max-w-none">
-            {paragraphs.map((paragraph, index) => {
-              // Check if paragraph is a heading (starts with #)
-              if (paragraph.startsWith("## ")) {
-                return (
-                  <h2 key={index} className="text-2xl font-bold text-deep-navy mt-8 mb-4">
-                    {paragraph.replace("## ", "")}
-                  </h2>
-                )
-              }
-              if (paragraph.startsWith("### ")) {
-                return (
-                  <h3 key={index} className="text-xl font-bold text-deep-navy mt-6 mb-3">
-                    {paragraph.replace("### ", "")}
-                  </h3>
-                )
-              }
-              // Regular paragraph
-              return (
-                <p key={index} className="text-muted-foreground leading-relaxed mb-4">
-                  {paragraph}
-                </p>
-              )
-            })}
-          </div>
+          {/* Content — renders rich HTML from editor */}
+            <div
+              className="prose prose-lg max-w-none prose-headings:text-deep-navy prose-a:text-sprout-green prose-a:no-underline hover:prose-a:underline"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
 
           {/* CTA */}
           <div className="mt-12 rounded-2xl bg-gradient-to-br from-sprout-green to-sprout-green-dark p-8 text-white">

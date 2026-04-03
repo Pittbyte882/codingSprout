@@ -7,10 +7,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { uploadBlogMedia } from "@/lib/upload"
 import { Loader2, Upload, X } from "lucide-react"
 import { saveBlogPost } from "@/app/actions/blog"
+import { RichTextEditor } from "@/components/admin/rich-text-editor"
+
+const BLOG_CATEGORIES = [
+  "Getting Started",
+  "Coding by Age",
+  "Coding Languages & Tools",
+  "Classes & Programs",
+  "Projects & Activities",
+  "Benefits of Coding",
+  "Parenting & STEM",
+]
 
 interface BlogPost {
   id: string
@@ -20,6 +32,7 @@ interface BlogPost {
   content: string
   is_published: boolean
   featured_image_url?: string
+  category?: string
 }
 
 interface BlogFormProps {
@@ -34,6 +47,8 @@ export function BlogForm({ post }: BlogFormProps) {
   const [slug, setSlug] = useState(post?.slug || "")
   const [featuredImage, setFeaturedImage] = useState(post?.featured_image_url || "")
   const [isUploading, setIsUploading] = useState(false)
+  const [content, setContent] = useState(post?.content || "")
+  const [category, setCategory] = useState(post?.category || "")
 
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle)
@@ -80,6 +95,8 @@ export function BlogForm({ post }: BlogFormProps) {
     setIsSubmitting(true)
 
     formData.append("isPublished", String(isPublished))
+    formData.append("content", content)
+    formData.append("category", category)
 
     if (post?.id) {
       formData.append("id", post.id)
@@ -130,6 +147,24 @@ export function BlogForm({ post }: BlogFormProps) {
         </p>
       </div>
 
+      {/* Category */}
+      <div className="space-y-2">
+        <Label>Category</Label>
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {BLOG_CATEGORIES.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <input type="hidden" name="category" value={category} />
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="featuredImage">Featured Image/Video (Optional)</Label>
 
@@ -177,7 +212,6 @@ export function BlogForm({ post }: BlogFormProps) {
             </label>
           </div>
         )}
-
         <input type="hidden" name="featuredImageUrl" value={featuredImage} />
       </div>
 
@@ -192,20 +226,14 @@ export function BlogForm({ post }: BlogFormProps) {
         />
       </div>
 
+      {/* Rich Text Editor */}
       <div className="space-y-2">
-        <Label htmlFor="content">Content</Label>
-        <Textarea
-          id="content"
+        <Label>Content</Label>
+        <RichTextEditor
+          content={content}
+          onChange={setContent}
           name="content"
-          rows={20}
-          required
-          defaultValue={post?.content || ""}
-          placeholder="Write your blog post content here..."
-          className="font-mono text-sm"
         />
-        <p className="text-xs text-muted-foreground">
-          Tip: Write in plain text with line breaks for paragraphs. We'll format it nicely on display.
-        </p>
       </div>
 
       <div className="flex items-center justify-between rounded-lg border p-4">
