@@ -44,7 +44,7 @@ export function RichTextEditor({ content, onChange, name }: RichTextEditorProps)
     editorProps: {
       attributes: {
         class:
-          "min-h-[400px] w-full rounded-b-md border-x border-b border-input bg-background px-4 py-3 text-sm ring-offset-background focus-visible:outline-none prose prose-sm max-w-none",
+          "min-h-[400px] w-full rounded-b-md border-x border-b border-input bg-background px-4 py-3 text-sm ring-offset-background focus-visible:outline-none prose prose-sm max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-ul:list-disc prose-ol:list-decimal",
       },
     },
   })
@@ -55,10 +55,10 @@ export function RichTextEditor({ content, onChange, name }: RichTextEditorProps)
     const url = window.prompt("Enter URL:", previousUrl)
     if (url === null) return
     if (url === "") {
-      editor.chain().focus().extendMarkToLink().unsetLink().run()
+      editor.chain().focus().unsetLink().run()
       return
     }
-    editor.chain().focus().extendMarkToLink().setLink({ href: url }).run()
+    editor.chain().focus().setLink({ href: url }).run()
   }, [editor])
 
   if (!editor) return null
