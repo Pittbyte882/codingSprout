@@ -34,7 +34,7 @@ const nextConfig = {
               "connect-src 'self' https://*.daily.co wss://*.daily.co https://*.supabase.co wss://*.supabase.co https://*.pluot.blue wss://*.pluot.blue",
               "frame-src 'self' https://*.daily.co https://daily.co",
               "media-src 'self' https://*.daily.co blob: mediastream:",
-              "img-src 'self' data: blob: https://images.unsplash.com https://*.daily.co",
+              "img-src 'self' data: blob: https://images.unsplash.com https://*.daily.co https://*.supabase.co",
               "worker-src 'self' blob:",
               "font-src 'self' data: https://*.daily.co",
               "child-src 'self' blob: https://*.daily.co",
