@@ -94,7 +94,7 @@ export default function CodingClassesFor1stAnd2ndGrade() {
           Online Coding Classes for Elementary Students
         </h2>
         <p className="text-lg text-gray-600 mb-6">
-          Our <strong>elementary coding classes</strong> are available both in-person and online.
+          Our <strong>elementary coding classes</strong> are available online.
           Live online sessions give 1st and 2nd graders real-time instruction with a Coding
           Sprout teacher — not pre-recorded videos, but interactive, live lessons.
         </p>

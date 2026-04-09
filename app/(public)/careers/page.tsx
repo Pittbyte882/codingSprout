@@ -45,7 +45,7 @@ const openPositions = [
   {
     title: "Coding Instructor",
     type: "Part-Time",
-    location: "In-Person & Online",
+    location: "Online",
     description: "Lead engaging coding classes for students from TK through 12th grade. You'll teach programming concepts, guide projects, and inspire the next generation of coders.",
     responsibilities: [
       "Teach coding classes to groups of 4-12 students",
@@ -57,14 +57,13 @@ const openPositions = [
       "Proficiency in at least one programming language (Python, JavaScript, Scratch, etc.)",
       "Experience working with children or teens",
       "Excellent communication and patience",
-      "Reliable transportation (for in-person classes)",
       "Must pass background check",
     ],
   },
   {
     title: "Teaching Assistant",
     type: "Part-Time",
-    location: "In-Person & Online",
+    location: " Online",
     description: "Support our lead instructors during coding classes by helping students one-on-one, managing classroom activities, and ensuring every child has a great experience.",
     responsibilities: [
       "Assist lead instructor during classes",

@@ -68,7 +68,7 @@ export function HeroSection() {
                     clipRule="evenodd"
                   />
                 </svg>
-                Online & In-Person
+                Online 
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <svg className="h-5 w-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
