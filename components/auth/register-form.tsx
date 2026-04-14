@@ -326,7 +326,7 @@ export function RegisterForm() {
               type="tel"
               value={formData.phone}
               onChange={(e) => updateField('phone', e.target.value)}
-              placeholder="(555) 123-4567"
+              placeholder="(951) 530-9660"
             />
           </div>
 

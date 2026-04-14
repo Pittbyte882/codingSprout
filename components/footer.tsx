@@ -145,7 +145,7 @@ export function Footer() {
                 <span className="break-all">hello@codingsprout.com</span>
               </a>
               <a 
-                href="tel:+15551234567" 
+                href="tel:+19515309660" 
                 className="flex items-center gap-2 hover:text-primary transition-colors"
               >
                 <Phone className="h-4 w-4 flex-shrink-0" />

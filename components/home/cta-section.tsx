@@ -33,7 +33,7 @@ export function CTASection() {
         </div>
 
         <p className="mt-8 text-sm text-primary-foreground/70">
-          Questions? Call us at (555) 123-4567 or email hello@codingsprout.com
+          Questions? Call us at (951) 530-9660 or email hello@codingsprout.com
         </p>
       </div>
     </section>
