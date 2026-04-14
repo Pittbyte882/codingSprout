@@ -188,7 +188,26 @@ export async function updateRegistrationStatus(registrationId: string, status: s
     return { success: false, error: "Failed to update registration" }
   }
 }
+export async function deleteRegistration(registrationId: string) {
+  if (!await isAuthorized()) {
+    return { success: false, error: "Not authorized" }
+  }
 
+  const supabase = supabaseAdmin()
+
+  const { error } = await supabase
+    .from("registrations")
+    .delete()
+    .eq("id", registrationId)
+
+  if (error) {
+    console.error("Delete registration error:", error)
+    return { success: false, error: "Failed to delete registration" }
+  }
+
+  revalidatePath("/admin/registrations")
+  return { success: true }
+}
 export async function deleteGalleryItem(id: string) {
   if (!await isAuthorized()) {
     return { success: false, error: "Not authorized" }
