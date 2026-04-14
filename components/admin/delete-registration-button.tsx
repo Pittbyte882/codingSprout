@@ -41,31 +41,38 @@ export function DeleteRegistrationButton({
       setIsDeleting(false)
     }
   }
+console.log("DeleteRegistrationButton rendering for:", registrationId)
+
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm" disabled={isDeleting}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete Registration?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This will permanently delete {studentName}'s registration. This cannot be undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleDelete}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-          >
-            {isDeleting ? "Deleting..." : "Delete"}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  )
+  <AlertDialog>
+   <AlertDialogTrigger asChild>
+  <Button 
+    size="sm" 
+    disabled={isDeleting}
+    className="bg-red-500 hover:bg-red-600 text-white h-6 px-2 text-xs rounded-full"
+  >
+    <Trash2 className="h-3 w-3 mr-1" />
+    Delete
+  </Button>
+</AlertDialogTrigger>
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Delete Registration?</AlertDialogTitle>
+        <AlertDialogDescription>
+          This will permanently delete {studentName}'s registration. This cannot be undone.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction
+          onClick={handleDelete}
+          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        >
+          {isDeleting ? "Deleting..." : "Delete"}
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+)
 }
