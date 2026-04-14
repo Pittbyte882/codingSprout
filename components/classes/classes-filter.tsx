@@ -13,7 +13,8 @@ const classTypes = [
 
 const gradeFilters = [
   { value: "all", label: "All Grades" },
-  { value: "tk-2", label: "TK - 2nd Grade" },
+  { value: "tk-k", label: "TK - K" },
+  { value: "1-2", label: "1st - 2nd Grade" },
   { value: "3-5", label: "3rd - 5th Grade" },
   { value: "6-8", label: "6th - 8th Grade" },
   { value: "9-12", label: "9th - 12th Grade" },

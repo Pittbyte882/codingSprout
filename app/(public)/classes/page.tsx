@@ -62,9 +62,20 @@ async function ClassesGridWrapper({ type, grade }: { type?: string; grade?: stri
     query = query.eq("is_individual", true)
   }
 
-  if (grade) {
-    query = query.contains("grade_levels", [grade])
+ if (grade && grade !== "all") {
+  const gradeMap: Record<string, string[]> = {
+    "tk-k": ["TK", "K"],
+    "1-2": ["1st", "2nd"],
+    "3-5": ["3rd", "4th", "5th"],
+    "6-8": ["6th", "7th", "8th"],
+    "9-12": ["9th", "10th", "11th", "12th"],
   }
+
+  const gradesToFilter = gradeMap[grade]
+  if (gradesToFilter) {
+    query = query.overlaps("grade_levels", gradesToFilter)
+  }
+}
 
   const { data: classes } = await query
 
