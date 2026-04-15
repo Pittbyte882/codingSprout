@@ -177,9 +177,10 @@ export default function ProgramsPage() {
                     <p className="text-sm font-semibold text-deep-navy mb-1">Part 2 (4-Week Session):</p>
                     <p className="text-sm font-semibold text-deep-navy mb-1">Includes 4 classes:</p>
                     <div className="space-y-1 text-sm text-muted-foreground">
-                      <p>TK–5: $200</p>
-                      <p>6–8: $260</p>
-                      <p>9–12: $300</p>
+                      <p>TK–3rd Grade: $200</p>
+                      <p>4th–5th Grade: $210</p>
+                      <p>6th–8th Grade: $260</p>
+                      <p>9th–12th Grade: $300</p>
                     </div>
                   </div>
                 </div>
@@ -189,9 +190,10 @@ export default function ProgramsPage() {
                   <p className="text-sm font-semibold text-deep-navy mb-1">Full 8-Week Program: </p>
                   <p className="text-sm font-semibold text-deep-navy mb-1">Includes 8 classes:</p>
                   <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>TK–5: $400 per student</p>
-                    <p>6–8: $520 per student</p>
-                    <p>9–12: $600 per student</p>
+                    <p>TK–3rd Grade: $400 per student</p>
+                    <p>4th–5th Grade: $420 per student</p>
+                    <p>6th–8th Grade: $520 per student</p>
+                    <p>9th–12th Grade: $600 per student</p>
                     <p className="text-sm font-semibold text-deep-navy mb-1">Completed Project at the end of Part 2</p>
                   </div>
                 </div>
