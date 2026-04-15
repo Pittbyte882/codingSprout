@@ -136,7 +136,7 @@ export default function ProgramsPage() {
                     <p className="text-xs text-muted-foreground">per class</p>
                   </div>
                 </div>
-                <div className="space-y-4">
+
                 <div className="flex items-start justify-between p-4 bg-white rounded-lg">
                   <div>
                     <p className="font-semibold text-deep-navy">4th-5th Grade</p>
@@ -147,6 +147,7 @@ export default function ProgramsPage() {
                     <p className="text-xs text-muted-foreground">per class</p>
                   </div>
                 </div>
+
                 <div className="flex items-start justify-between p-4 bg-white rounded-lg">
                   <div>
                     <p className="font-semibold text-deep-navy">6th–8th Grade</p>
@@ -168,43 +169,44 @@ export default function ProgramsPage() {
                     <p className="text-xs text-muted-foreground">per class</p>
                   </div>
                 </div>
-              </div>
-                <div className="mt-6 p-4 bg-white rounded-lg">
-                <p className="text-sm font-medium text-deep-navy mb-3">Session Options:</p>
-                
-                {/* Part 1 and Part 2 side by side */}
-                <div className="grid grid-cols-2 gap-4 mb-3">
-                  <div>
-                    <p className="text-sm font-semibold text-deep-navy mb-1">Part 1 (4-Week Session):</p>
-                    <p className="text-sm font-semibold text-deep-navy mb-1">Includes 4 classes:</p>
-                    <div className="space-y-1 text-sm text-muted-foreground">
-                      <p>TK–5: $200</p>
-                      <p>6–8: $260</p>
-                      <p>9–12: $300</p>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-deep-navy mb-1">Part 2 (4-Week Session):</p>
-                    <p className="text-sm font-semibold text-deep-navy mb-1">Includes 4 classes:</p>
-                    <div className="space-y-1 text-sm text-muted-foreground">
-                      <p>TK–3rd Grade: $200</p>
-                      <p>4th–5th Grade: $210</p>
-                      <p>6th–8th Grade: $260</p>
-                      <p>9th–12th Grade: $300</p>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Full 8-Week Program */}
-                <div className="pt-3 border-t border-light-gray">
-                  <p className="text-sm font-semibold text-deep-navy mb-1">Full 8-Week Program: </p>
-                  <p className="text-sm font-semibold text-deep-navy mb-1">Includes 8 classes:</p>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>TK–3rd Grade: $400 per student</p>
-                    <p>4th–5th Grade: $420 per student</p>
-                    <p>6th–8th Grade: $520 per student</p>
-                    <p>9th–12th Grade: $600 per student</p>
-                    <p className="text-sm font-semibold text-deep-navy mb-1">Completed Project at the end of Part 2</p>
+                <div className="mt-6 p-4 bg-white rounded-lg">
+                  <p className="text-sm font-medium text-deep-navy mb-3">Session Options:</p>
+                  
+                  {/* Part 1 and Part 2 side by side */}
+                  <div className="grid grid-cols-2 gap-4 mb-3">
+                    <div>
+                      <p className="text-sm font-semibold text-deep-navy mb-1">Part 1 (4-Week Session):</p>
+                      <p className="text-sm font-semibold text-deep-navy mb-1">Includes 4 classes:</p>
+                      <div className="space-y-1 text-sm text-muted-foreground">
+                        <p>TK–5: $200</p>
+                        <p>6–8: $260</p>
+                        <p>9–12: $300</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-deep-navy mb-1">Part 2 (4-Week Session):</p>
+                      <p className="text-sm font-semibold text-deep-navy mb-1">Includes 4 classes:</p>
+                      <div className="space-y-1 text-sm text-muted-foreground">
+                        <p>TK–3rd Grade: $200</p>
+                        <p>4th–5th Grade: $210</p>
+                        <p>6th–8th Grade: $260</p>
+                        <p>9th–12th Grade: $300</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Full 8-Week Program */}
+                  <div className="pt-3 border-t border-light-gray">
+                    <p className="text-sm font-semibold text-deep-navy mb-1">Full 8-Week Program: </p>
+                    <p className="text-sm font-semibold text-deep-navy mb-1">Includes 8 classes:</p>
+                    <div className="space-y-1 text-sm text-muted-foreground">
+                      <p>TK–3rd Grade: $400 per student</p>
+                      <p>4th–5th Grade: $420 per student</p>
+                      <p>6th–8th Grade: $520 per student</p>
+                      <p>9th–12th Grade: $600 per student</p>
+                      <p className="text-sm font-semibold text-deep-navy mb-1">Completed Project at the end of Part 2</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -249,6 +251,7 @@ export default function ProgramsPage() {
                   </div>
                 </div>
               </div>
+
               <div className="mt-6 p-4 bg-white rounded-lg">
                 <p className="text-sm font-medium text-deep-navy">Flexible Scheduling:</p>
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -257,6 +260,7 @@ export default function ProgramsPage() {
               </div>
             </div>
           </div>
+
           <div className="mt-12 text-center">
             <p className="text-muted-foreground max-w-2xl mx-auto">
               We accept both credit card payments and charter school funds. Charter schools receive dedicated support
@@ -311,8 +315,8 @@ export default function ProgramsPage() {
                   <span className="text-sprout-green">•</span>
                   <span>Website or application (9–12)</span>
                 </li>
-                <p className="text-sm font-semibold text-deep-navy mb-1">Only Students that complete both Part 1 & 2 will have a completed Project</p>
               </ul>
+              <p className="text-sm font-semibold text-deep-navy mb-1">Only Students that complete both Part 1 & 2 will have a completed Project</p>
             </div>
           </div>
         </div>
@@ -405,7 +409,6 @@ export default function ProgramsPage() {
               href="/contact"
               className="inline-block bg-white text-sprout-green px-8 py-3 rounded-lg font-semibold hover:bg-off-white transition-colors"
             >
-            
               Contact Us
             </a>
             <a
