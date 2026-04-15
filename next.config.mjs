@@ -29,9 +29,9 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self' https://*.daily.co",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daily.co https://daily.co",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daily.co https://daily.co https://www.googletagmanager.com https://www.google-analytics.com",
               "style-src 'self' 'unsafe-inline' https://*.daily.co",
-              "connect-src 'self' https://*.daily.co wss://*.daily.co https://*.supabase.co wss://*.supabase.co https://*.pluot.blue wss://*.pluot.blue",
+              "connect-src 'self' https://*.daily.co wss://*.daily.co https://*.supabase.co wss://*.supabase.co https://*.pluot.blue wss://*.pluot.blue https://www.google-analytics.com https://analytics.google.com",
               "frame-src 'self' https://*.daily.co https://daily.co",
               "media-src 'self' https://*.daily.co blob: mediastream:",
               "img-src 'self' data: blob: https://images.unsplash.com https://*.daily.co https://*.supabase.co",

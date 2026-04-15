@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script src="/coi-serviceworker.js" />
+        
         {/* Google Analytics */}
         <script
           async
