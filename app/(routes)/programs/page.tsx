@@ -128,7 +128,7 @@ export default function ProgramsPage() {
               <div className="space-y-4">
                 <div className="flex items-start justify-between p-4 bg-white rounded-lg">
                   <div>
-                    <p className="font-semibold text-deep-navy">TK–5th Grade</p>
+                    <p className="font-semibold text-deep-navy">TK–3rd Grade</p>
                     <p className="text-sm text-muted-foreground">45 minutes per class</p>
                   </div>
                   <div className="text-right">
@@ -136,7 +136,17 @@ export default function ProgramsPage() {
                     <p className="text-xs text-muted-foreground">per class</p>
                   </div>
                 </div>
-
+                <div className="space-y-4">
+                <div className="flex items-start justify-between p-4 bg-white rounded-lg">
+                  <div>
+                    <p className="font-semibold text-deep-navy">4th-5th Grade</p>
+                    <p className="text-sm text-muted-foreground">60 minutes per class</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-sprout-green">$52.50</p>
+                    <p className="text-xs text-muted-foreground">per class</p>
+                  </div>
+                </div>
                 <div className="flex items-start justify-between p-4 bg-white rounded-lg">
                   <div>
                     <p className="font-semibold text-deep-navy">6th–8th Grade</p>
@@ -159,7 +169,7 @@ export default function ProgramsPage() {
                   </div>
                 </div>
               </div>
-<div className="mt-6 p-4 bg-white rounded-lg">
+                <div className="mt-6 p-4 bg-white rounded-lg">
                 <p className="text-sm font-medium text-deep-navy mb-3">Session Options:</p>
                 
                 {/* Part 1 and Part 2 side by side */}
