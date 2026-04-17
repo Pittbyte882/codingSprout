@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { CheckCircle2 } from "lucide-react"
+import { Navigation } from "@/components/navigation"
 
 export const metadata: Metadata = {
   title: "Programs & Pricing | Coding Sprout",
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
 export default function ProgramsPage() {
   return (
     <div>
+      <Navigation /> 
       {/* Hero */}
       <section className="bg-gradient-to-br from-off-white to-sky-blue/10 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
