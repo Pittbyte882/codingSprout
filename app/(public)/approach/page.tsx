@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, Gamepad2, Lightbulb, Rocket, Users } from "lucide-react"
 
@@ -86,12 +87,27 @@ export default function ApproachPage() {
       {/* Hero */}
       <section className="bg-gradient-to-br from-off-white to-primary/5 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-secondary sm:text-5xl">Our Teaching Approach</h1>
-            <p className="mt-6 text-lg text-muted-foreground">
-              We've developed a research-backed methodology that meets students where they are and helps them grow at
-              their own pace.
-            </p>
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight text-secondary sm:text-5xl">Our Teaching Approach</h1>
+              <p className="mt-6 text-lg text-muted-foreground">
+                We've developed a research-backed methodology that meets students where they are and helps them grow at
+                their own pace.
+              </p>
+              <Link href="/classes" className="mt-8 inline-block">
+                <Button size="lg" className="bg-primary hover:bg-sprout-green-dark">
+                  Browse Classes
+                </Button>
+              </Link>
+            </div>
+            <div className="relative h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1632811484536-6f73dc0934a3?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=yy-teoh-rtSu8oEpPo4-unsplash.jpg"
+                alt="Kids learning to code"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -112,6 +128,38 @@ export default function ApproachPage() {
                 <p className="mt-2 text-sm text-muted-foreground">{principle.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Photo break */}
+      <section className="py-16 lg:py-24 bg-muted/30">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="relative h-64 rounded-2xl overflow-hidden shadow-lg">
+              <Image
+                src="https://images.unsplash.com/photo-1603354350317-6f7aaa5911c5?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=robo-wunderkind-hLvQ4-QEBAE-unsplash.jpg"
+                alt="Student coding on laptop"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-64 rounded-2xl overflow-hidden shadow-lg">
+              <Image
+                src="https://images.unsplash.com/photo-1599666527768-e8cf85741436?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kelly-sikkema-4FwEuaWFxgE-unsplash.jpg"
+                alt="Teacher helping student"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-64 rounded-2xl overflow-hidden shadow-lg">
+              <Image
+                src="https://images.unsplash.com/photo-1603354351226-d82bd4a635a3?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=robo-wunderkind--_QpJv4J_AA-unsplash.jpg"
+                alt="Kids collaborating"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -144,18 +192,30 @@ export default function ApproachPage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA with photo */}
       <section className="py-16 lg:py-24">
-        <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
-          <h2 className="text-3xl font-bold text-secondary">See Our Approach in Action</h2>
-          <p className="mt-4 text-muted-foreground">
-            Browse our available classes to find the perfect fit for your child.
-          </p>
-          <Link href="/classes" className="mt-8 inline-block">
-            <Button size="lg" className="bg-primary hover:bg-sprout-green-dark">
-              View Classes
-            </Button>
-          </Link>
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div className="relative h-80 rounded-2xl overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1568585219057-9206080e6c74?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=stem-t4l--PnSpCHYKsw-unsplash.jpg"
+                alt="Student proud of their work"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold text-secondary">See Our Approach in Action</h2>
+              <p className="mt-4 text-muted-foreground">
+                Browse our available classes to find the perfect fit for your child.
+              </p>
+              <Link href="/classes" className="mt-8 inline-block">
+                <Button size="lg" className="bg-primary hover:bg-sprout-green-dark">
+                  View Classes
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>
