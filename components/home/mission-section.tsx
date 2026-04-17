@@ -8,20 +8,20 @@ export function MissionSection() {
     <section className="bg-muted/30 py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* Video Placeholder */}
-          <div className="relative aspect-video overflow-hidden rounded-2xl bg-secondary shadow-xl">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <Button
-                  size="lg"
-                  className="h-16 w-16 rounded-full bg-primary hover:bg-sprout-green-dark"
-                  aria-label="Play video"
-                >
-                  <Play className="h-8 w-8 text-primary-foreground ml-1" />
-                </Button>
-                <p className="mt-4 text-secondary-foreground/60">Video Coming Soon</p>
-              </div>
-            </div>
+          {/* Video */}
+          <div className="relative aspect-video overflow-hidden rounded-2xl shadow-xl">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source
+                src="https://videos.pexels.com/video-files/5892382/5892382-uhd_3840_2160_30fps.mp4"
+                type="video/mp4"
+              />
+            </video>
           </div>
 
           {/* Mission Statement */}

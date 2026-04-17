@@ -33,7 +33,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://*.daily.co",
               "connect-src 'self' https://*.daily.co wss://*.daily.co https://*.supabase.co wss://*.supabase.co https://*.pluot.blue wss://*.pluot.blue https://www.google-analytics.com https://analytics.google.com",
               "frame-src 'self' https://*.daily.co https://daily.co",
-              "media-src 'self' https://*.daily.co blob: mediastream:",
+              "media-src 'self' https://*.daily.co blob: mediastream: https://videos.pexels.com",
               "img-src 'self' data: blob: https://images.unsplash.com https://*.daily.co https://*.supabase.co",
               "worker-src 'self' blob:",
               "font-src 'self' data: https://*.daily.co",
